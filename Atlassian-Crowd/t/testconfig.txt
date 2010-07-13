@@ -1,0 +1,21 @@
+# config file for 'make test'. You can put lines in this file to have the 
+# test attempt operations on a real Crowd SOAP server.
+#
+# The format is
+#
+#   <SOAP URL>,<applicationname>,<applicationpassword>,<username>,<userpassword>,[[!]groupname]
+#
+# For example, the line:
+#
+#   http://localhost:8095/crowd/services/SecurityServer,apache2,apache2,admin,admin123,crowd-administrators
+#
+# will test that 
+#
+#     a) the application 'apache2' can be authenticated at the URL (using password 'apache2')
+#     b) The principal 'admin' can be authenticated against the 'apache2' application (using password 'admin123')
+#     c) The 'admin' user belongs to the 'crowd-administrators' group. You can also specify '!crowd-administrators' 
+#        to test that a user _doesn't belong to the group.
+#
+#http://localhost:8095/crowd/services/SecurityServer,apache2,apache2,admin,admin123,crowd-administrators
+
+

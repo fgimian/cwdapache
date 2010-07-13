@@ -1,0 +1,11 @@
+i pkginfo
+i depend
+!default 0755 root bin
+d none 5.8.4 ? ? ?
+d none 5.8.4/man ? ? ?
+d none 5.8.4/man/man3 ? ? ?
+f none 5.8.4/man/man3/Apache::CrowdAuthz.3=blib/man3/Apache::CrowdAuthz.3 0644 root root
+d none site_perl ? ? ?
+d none site_perl/5.8.4 ? ? ?
+d none site_perl/5.8.4/Apache 0755 root root
+f none site_perl/5.8.4/Apache/CrowdAuthz.pm=blib/lib/Apache/CrowdAuthz.pm 0644 root root

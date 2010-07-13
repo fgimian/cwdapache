@@ -1,0 +1,9 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/Atlassian-Crowd.t
+t/testconfig.txt
+t/test_authz.txt
+lib/Atlassian/Crowd.pm
+META.yml                                 Module meta-data (added by MakeMaker)

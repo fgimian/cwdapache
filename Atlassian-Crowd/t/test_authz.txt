@@ -1,0 +1,69 @@
+[/]
+andrewr = rw
+
+[/crowdauth]
+* = r
+andrewr =rw
+
+[/crowdauth/trunk]
+andrewr = rw
+bogus =
+
+[/crowdauth/trunk/foo]
+andrewr = rw
+
+[/Atlassian-Crowd]
+andrewr = rw
+
+[/crowdauth/trunk/devel]
+andrewr = r
+
+[/crowdauth/branches]
+andrewr = r
+@developers = rw
+
+[/crowdauth/branches/foo]
+andrewr = 
+
+[/cwdsup700]
+@calc-developers=r
+@paint-developers=rw
+
+[/cwdsup701]
+@calc-developers=rw
+@paint-developers=r
+
+[/cwdsup702]
+sally=
+@calc-developers=rw
+@paint-developers=r
+
+[groups]
+calc-developers = harry, sally, joe
+paint-developers = frank, sally, jane
+everyone = harry, sally, joe, frank, sally, jane
+
+[calc:/projects/calc]
+@calc-developers = rw
+
+[paint:/projects/paint]
+@paint-developers = rw
+jane = r
+
+[calc:/branches/calc/bug-142]
+harry = rw
+sally = r
+
+[calc:/branches/calc/bug-142/secret]
+harry =
+
+[/spaces]
+@group with spaces=r
+@group with more spaces=
+
+[/spaces2]
+@another group with spaces = rw
+
+
+
+

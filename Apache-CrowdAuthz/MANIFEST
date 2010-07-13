@@ -1,0 +1,7 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/Apache-CrowdAuthz.t
+lib/Apache/CrowdAuthz.pm
+META.yml                                 Module meta-data (added by MakeMaker)

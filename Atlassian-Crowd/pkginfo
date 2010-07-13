@@ -1,0 +1,13 @@
+CLASSES=none
+BASEDIR=/usr/perl5
+TZ=PST
+PATH=/sbin:/usr/sbin:/usr/bin:/usr/sadm/install/bin
+PKG=ATLNperl-atlassian-crowd
+NAME=pkg-get
+VERSION=1.3
+CATEGORY=system
+DESC=The Atlassian::Crowd Perl module.
+VENDOR=Atlassian
+EMAIL=support@atlassian.com
+PKGSAV=/var/sadm/pkg/ATLNperl-atlassian-crowd/save
+

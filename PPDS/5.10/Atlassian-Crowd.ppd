@@ -1,0 +1,13 @@
+<SOFTPKG NAME="Atlassian-Crowd" VERSION="1,3,0,0">
+    <TITLE>Atlassian-Crowd</TITLE>
+    <ABSTRACT>Perl interface to the Atlassian Crowd SOAP API</ABSTRACT>
+    <AUTHOR>Atlassian</AUTHOR>
+    <IMPLEMENTATION>
+        <DEPENDENCY NAME="Error" VERSION="0,1,0,0" />
+        <DEPENDENCY NAME="SOAP-Lite" VERSION="0,69,0,0" />
+        <DEPENDENCY NAME="version" VERSION="0,1,0,0" />
+        <OS NAME="MSWin32" />
+        <ARCHITECTURE NAME="MSWin32-x86-multi-thread-5.10" />
+        <CODEBASE HREF="Atlassian-Crowd.tar.gz" />
+    </IMPLEMENTATION>
+</SOFTPKG>

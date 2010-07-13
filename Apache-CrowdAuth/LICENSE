@@ -1,0 +1,459 @@
+Atlassian End User License Agreement
+
+IMPORTANT - READ CAREFULLY: This End-User License Agreement (EULA) is a legal
+agreement between you (either an individual or a single legal entity) (Licensee)
+and Atlassian to use the Software. This EULA applies after the Licensee has
+received the Software from a Reseller or Atlassian. An amendment or addendum to
+this EULA may accompany the Software. The Licensee agrees to be bound by the
+terms of this EULA by installing, copying, downloading or otherwise using the
+Software or clicking the "I Accept/ Agree" button if acquiring the Software
+on-line. If the Licensee does not agree to the terms of this EULA, you may not
+install, copy, download or otherwise use the Software or if acquiring the
+Software on-line click the "I Do Not Accept/ Agree" button.
+
+1. Definitions
+
+Accessible Code means source code that is unprotected and accessible.
+
+Atlassian means Atlassian Pty Ltd (ABN 53 102 443 916) of 173-185 Sussex Street,
+Sydney, New South Wales 2000 Australia.
+
+Authorised User means a person who accesses and uses the Software under a User
+Licence.
+
+Embedded Software means any third party software which may contain Accessible
+Code or Protected Code licensed by Atlassian from a third party and embedded in
+the Software.
+
+Fees mean all fees and expenses payable by the Licensee to Atlassian in
+acquiring the Software and as applicable any Maintenance or User Licenses.
+
+Maintenance means the provision by Atlassian to Licensee under separate
+agreement, of Software updates and/or enhancements made generally available to
+customers from time to time, and online technical support (and where applicable,
+phone support) for the sole purpose of addressing technical issues relating to
+the use of the Software.
+
+OEM Distribution means distribution of the Software as either a bundled add-on
+to, or embedded component of, another application with such application being
+made available to its users as, but not limited to, an on-premises application,
+a hosted application, a Software-as-a-Service offering or a subscription.
+
+Protected Code means any source code that is protected against access by
+Atlassian or a third party and is not accessible under this EULA.
+
+Reseller means an entity selling and distributing Atlassian products which is
+authorised by Atlassian to do so.
+
+Software means the Atlassian software that accompanies this EULA, which includes
+computer software, Accessible Code and Protected Code and may include associated
+media, printed materials, "online" or electronic documentation, Internet-based
+services and Embedded Software.
+
+User License means a license granted under this EULA to the Licensee to permit
+an Authorised User to use the Software. The number of User Licenses granted to
+the Licensee is dependent on the Fees paid by the Licensee.
+
+2. Grant of License
+
+Upon Licensee's acceptance of the EULA, Atlassian grants the Licensee the
+non-exclusive right to use the Software subject to the following:
+
+Full License
+
+2.1 Authorized Users
+
+The licenses granted are subject to the condition that the Licensee must ensure
+the maximum number of Authorised Users accessing and using the Software
+concurrently is equal to the number of User Licences for which the necessary
+Fees have been paid to the Reseller or Atlassian. The Licensee may purchase
+additional User Licenses at any time on payment of the appropriate Fees to the
+Reseller or Atlassian.
+
+2.2 Backup
+
+The Licensee is permitted to copy the Software for data protection, archiving
+and backup purposes. However, only the strictly necessary number of backup
+copies may be made.
+
+Evaluation License
+
+2.3 Installation and Use
+
+Atlassian may provide evaluation copies of the Software for customers to assess
+the Software, which may not have full functionality. If the Software is only
+provided for evaluation purposes the rights of the Licensee are limited to this
+evaluation license which permit the Licensee to EULA 3.0 Atlassian End User
+License Agreement download, install, use and operate the Software for a limited
+period and accessible by a limited number of temporary users as determined by
+Atlassian (Evaluation Period). On the expiry of the Evaluation Period the
+Software will cease to function and the Licensee must remove and delete all
+copies of the Software in its possession.
+
+General License Terms 2.4 Scope
+
+Each license granted by Atlassian under this EULA is unless otherwise specified
+in this EULA or agreed by Atlassian in writing; worldwide, non-exclusive, non-
+transferable and non-sublicensable.
+
+2.5 Duration
+
+Subject to the terms of this EULA and unless terminated earlier in accordance
+with this EULA, a full license is perpetual and the evaluation license runs for
+the Evaluation Period.
+
+2.6 Permitted Computers
+
+Except as otherwise agreed in writing by Atlassian, the Licensee must only
+install the Software and make the Software available for use on hardware systems
+owned, leased or controlled by the Licensee.
+
+2.7 Responsibility for Non-controlled systems
+
+If Atlassian permits the Licensee to install the Software or make the Software
+available for use on hardware systems not owned, leased or controlled by the
+Licensee (Uncontrolled Systems), the Licensee will ensure the terms of this EULA
+are complied with by users of such Uncontrolled Systems and the Licensee
+indemnifies Atlassian for all costs, damages and loss Atlassian suffers arising
+from such installation or use of the Software on Uncontrolled Systems.
+
+3. Fees
+
+The Licensee must pay all Fees by their due date. Failure to pay Fees by the due
+date will result in the immediate termination of the licenses granted under this
+EULA.
+
+4. Embedded Software
+
+4.1 Rights
+
+The Licensee acknowledges the Software contains Embedded Software and that in
+addition to the obligations of this EULA, additional obligations may apply in
+relation to any use of Embedded Software by the Licensee which is not in
+accordance with the use of the Software as permitted under the terms of this
+EULA. In such circumstances the Licensee must consult the relevant third party
+to acquire any necessary licenses and consents in relation to its use of any
+Embedded Software.
+
+4.2 Benchmarking
+
+While the Licensee is permitted to conduct "benchmarking" in relation to the
+Software as a whole, the Licensee must not conduct any "benchmarking" in
+relation to individual Embedded Software elements.
+
+5. Reservation of Rights and Ownership
+
+Atlassian reserves all rights not expressly granted to the Licensee in this
+EULA. The Software and all copies thereof are protected by copyright and other
+intellectual property laws and treaties. Atlassian or relevant third parties own
+the title, copyright, and other intellectual property rights in the Software and
+all subsequent copies of the Software. The Software is licensed, not sold and
+the Licensee does not acquire any rights of ownership in the Software.
+
+6. Support and Maintenance
+
+6.1 Additional Software / Services
+
+This EULA applies to updates, supplements, add-on components, or Internet-based
+services components, of the Software (Supplementary Software) that Atlassian may
+provide to the Licensee or make available to the Licensee after the date the
+Licensee obtains its initial copy of the Software, unless Atlassian provides
+other terms along with any Supplementary Software. Atlassian reserves the right
+to discontinue any Internet-based services provided to the Licensee or made
+available to the Licensee through the use of the Software.
+
+6.2 Support and Upgrades
+
+Any support services provided by Atlassian will be substantially as described in
+separate written materials provided by Atlassian to the Licensee and may be the
+subject to the payment of additional Fees.
+
+7. Licensee Obligations
+
+7.1 Positive Obligations
+
+Licensee must at all times: (a) ensure that only an Authorised User uses the
+Software and only in accordance with the terms and conditions of this EULA, (b)
+if the Software is a "Confluence Clustered Product," ensure that the Software is
+not used for rental, timesharing, subscription service, hosting or outsourcing;
+and (c) with respect to any use of the Software, include an attribution to
+Atlassian to be included on all user interfaces in the following format:
+"Powered by Atlassian", which must in every case include a hyperlink to
+http://www.atlassian.com, and which must be in the same format as delivered in
+the Software.
+
+7.2 Negative Obligations
+
+Licensee must not, whether through negligent act or omission, or without the
+prior written consent of Atlassian, which may be withheld at AtlassianÕs
+discretion and include certain conditions: (a) decompile, reverse engineer,
+disassemble, modify, adapt, create derivative works from, or otherwise attempt
+to derive, any portion of the Software; (b) directly or indirectly access or use
+any Embedded Software independently of the rest of the Software; (c) sell,
+sublicense, redistribute, reproduce, transmit, circulate, disseminate, translate
+or reduce to or from any electronic medium or machine readable form the Software
+or any data/information not owned by the Licensee which is provided to Licensee
+through the Software to a person who is not an Authorised User; (d) vary or
+amend the Software (including any Embedded Software, Protected Code or
+Accessible Code); (e) except as otherwise permitted in this EULA, publish,
+promote, broadcast, circulate or refer publicly to the Atlassian name, trade
+name, trademark, service mark or logo (f) commit any act or omission the likely
+result of which is that Atlassian's or any of its third party suppliersÕ
+reputation will be brought into disrepute or which act or omission could
+reasonably be expected to have or does have a material and adverse effect on
+Atlassian's interests; (g) distribute the Software via OEM Distribution without
+entering into a separate OEM Distribution Agreement with Atlassian or (h) copy
+or embed elements of the Accessible Code contained in the Software into other
+applications.
+
+7.3 Protection Mechanisms
+
+The Software includes license protection mechanisms that are designed to manage
+and protect the intellectual property rights of Atlassian and its third party
+suppliers. Licensee must not modify or alter those features to try to defeat the
+Software use rules that the license protection mechanisms are designed to
+enforce. Any such attempt by the Licensee will result in the immediate
+termination of any license granted under this EULA.
+
+8. Notification
+
+8.1 General
+
+If the Licensee discovers it has breached any of its obligations under this EULA
+and in particular the obligations in clause 7, the Licensee must immediately
+report such breach to Atlassian, in writing.
+
+8.2 Penalties
+
+Where a breach involves the distribution or use of Software outside of the User
+License or any Additional User License or the use and distribution of Embedded
+Software Atlassian and/or any third party owner of Embedded Software will be
+entitled, in addition to any other right or claim that Atlassian or any third
+party owner of Embedded Software may have against Licensee, to retroactively
+charge Licensee, in addition to any other Fees payable by Licensee under this
+EULA, a fee calculated based on the number of prohibited distributions or uses
+times the respective list prices that Atlassian and/or any third party owner of
+Embedded Software charges for the Software or Embedded Software respectively.
+
+9. Investigation of Unauthorised Use and Distribution
+
+If Atlassian reasonably suspects the Software has been distributed to or
+obtained by any person or party without Atlassian's prior written consent, that
+Embedded Software is being varied or accessed or used independently of the
+Software or that Licensee is otherwise breaching a term of this EULA and in
+particular its obligations under clause 7, Atlassian reserves the right to
+require the Licensee to provide an unqualified certificate executed by the
+Licensee's auditor verifying compliance with the terms of this EULA. Such
+requests shall be made no more frequently than once per calendar year. If such
+an unqualified certificate is not received by Atlassian within ninety (90)
+calendar days of being required, it will be considered that a breach of this
+EULA has occurred allowing Atlassian to terminate the licenses granted under
+this EULA.
+
+10. Permitted Fixes
+
+Notwithstanding anything else in this EULA but subject to the terms and
+conditions contained herein, the Licensee is permitted to modify the Accessible
+Code in the Software to develop bug fixes, customizations or additional features
+solely for their internal purposes of using the Software.
+
+11. Termination
+
+11.1
+
+Without prejudice to any other rights and in addition to any other termination
+rights in this EULA, Atlassian may terminate this EULA if the Licensee fails to
+comply with the terms and conditions of this EULA. Immediately upon termination
+of a license granted under this EULA, the Licensee must at its own cost: (a)
+cease permitting access to and procure that all Authorised Users immediately
+cease all use of the Software; and (b) remove all copies of the Software from
+its computer systems or any Uncontrolled Systems; (c) provide Atlassian with
+written certification that it has destroyed all copies of the Software including
+all Accessible Code in its possession, custody or control.
+
+11.2
+
+The decommissioning of the Software by the Licensee will have, as a consequence,
+the termination of this EULA between Atlassian and the Licensee.
+
+12. Infringement Indemnification
+
+12.1 Infringement by Software
+
+If the Software becomes, or in the opinion of Atlassian may become, the subject
+of a claim of infringement of any third partyÕs intellectual property rights,
+Atlassian may, at its option and in its discretion: (i) procure for Licensee the
+right to use the Software free of any liability; (ii) replace or modify the
+Software to make it non-infringing; or (iii) refund any License Fees related to
+this Software paid by Licensee. The foregoing states the sole liability of
+Atlassian and the exclusive remedy of Licensee for any infringement of
+intellectual property rights by the Software or any other items provided by
+Atlassian under this EULA.
+
+12.2 Licensee's Use
+
+Licensee will indemnify and hold harmless Atlassian against all costs, expenses,
+losses and claims made against Atlassian as a result of any infringement of a
+third partyÕs intellectual property rights arising from the LicenseeÕs or its
+Authorised UserÕs modification to the Software or combination of the Software
+with other products by Licensee or any of its Authorised Users
+
+12.3 Third Party Products
+
+Licensee acknowledges and agrees that if Licensee breaches this EULA and
+Atlassian or any third party owner of Embedded Software suffers any loss, damage
+cost or expense directly or indirectly in connection with the breach, Atlassian
+or the relevant third party owner of the Embedded Software may bring an action
+directly against Licensee.
+
+13. Exclusion of Warranties
+
+To the maximum extent permitted by applicable law in the jurisdiction in which
+the Software or any Supplementary Software is supplied or Maintenance provided,
+Atlassian and its third party suppliers provide the Software and any Maintenance
+AS IS AND WITH ALL FAULTS, and except otherwise expressly contained in the EULA,
+hereby disclaim all other warranties and conditions, whether express, implied or
+statutory.
+
+14. Limitation of Liability
+
+14.1 Non-excludable Warranties
+
+The Licensee may have remedies against Atlassian imposed by law or statute which
+can not be excluded by Atlassian and its third party suppliers. To the extent
+the Licensee has such legal remedies Atlassian or its third party suppliers then
+to the fullest extent permitted by law Atlassian and its third party suppliersÕ
+liability is limited (a) at Atlassian's option, to: (i) in the case of the
+Software: 1) repairing or replacing the Software; or 2) the cost of such repair
+or replacement; and (ii) in the case of Maintenance services: 1) re-supply of
+the services; or 2) the cost of having the Maintenance services supplied again
+or if the above limitation is not applicable then (b) to the greater of the
+actual damages Licensee incurs in reasonable reliance on the Software up to the
+amount actually paid by the Licensee for the Software.
+
+14.2 Limitation of Liability for other Losses
+
+Subject to section 14.1, notwithstanding any damages Licensee might incur for
+any reason whatsoever to the maximum extent permitted by applicable law the
+entire liability of Atlassian and any of its third party suppliers under any
+provision of this EULA and LicenseeÕs exclusive remedy hereunder shall be
+limited to the greater of the actual damages Licensee incurs in reasonable
+reliance on the Software up to the amount actually paid by the Licensee for the
+Software.
+
+14.3 Consequential Loss
+
+Notwithstanding anything else in this section 14, to the maximum extent
+permitted by applicable law, in no event shall Atlassian or its third party
+suppliers be liable for any special, incidental, punitive, indirect, or
+consequential damages whatsoever arising out of or in any way related to the use
+of or inability to use the Software, the provision of or failure to provide
+Maintenance or other services, information, software, and related content
+through the Software or otherwise arising out of the use of the Software, or
+otherwise under or in connection with any provision of this EULA, even in the
+event of the fault, tort (including negligence), misrepresentation, strict
+liability, breach of contract or breach of warranty of Atlassian or any third
+party supplier, and even if Atlassian or any third party supplier has been
+advised of the possibility of such damages.
+
+15. Publicity Rights
+
+Licensee grants Atlassian the right to include Licensee as a customer in
+Software promotional material. Licensee can deny Atlassian this right at any
+time by submitting a written request via email to sales@atlassian.com,
+requesting to be excluded from Software promotional material. Requests made
+after purchasing may take thirty (30) calendar days to process.
+
+16. Amendment
+
+This EULA may not be amended except with the written agreement of Atlassian
+whose consent may be withheld in its complete discretion without any requirement
+to provide reasons.
+
+17. Assignment
+
+Licensee may assign this EULA to: (i) succeeding parties in the case of a
+merger, acquisition or change of control; or (ii) if Licensee is a supplier to a
+government agency; provided, however, that in each case, (a) Atlassian is
+notified in writing within ninety (90) days of such assignment, (b) the assignee
+agrees to be bound by the terms and conditions contained in this EULA and (c)
+upon such assignment the assignee makes no further use of the software licensed
+under this EULA . Atlassian may assign its rights and obligation under this EULA
+without consent of Licensee. Any permitted assignee shall be bound by the terms
+and conditions of this Agreement.
+
+18. Restrictions
+
+18.1 Australia
+
+If the Software is acquired in Australia by the Licensee, the Licensee must
+comply with all applicable Australian export control laws and regulations,
+including without limitation, the laws and regulations administered by the
+Australian Department of Foreign Affairs and Trade (or any replacement
+department or authority).
+
+18.2 United States
+
+If the Software is acquired by the Licensee in the United States, the Licensee
+acknowledges: (a) the Software is subject to U.S. export jurisdiction and agrees
+to comply with all applicable international and national laws that apply to the
+Software, including the U.S. Export Administration Regulations, as well as
+end-user, end-use, and destination restrictions issued by U.S. and other
+governments and notwithstanding the above; and (b) the provisions of the USA
+Uniform Computer Information Transaction Act do not apply to this EULA.
+
+18.3 General
+
+The export of the Software from the country of original purchase may be subject
+to control or restriction by applicable local law. Licensee is solely
+responsible for determining the existence and application of any such law to any
+proposed export and for obtaining any needed authorization. Licensee agrees not
+to export the Software from any country in violation of applicable legal
+restrictions on such export.
+
+19. Governing Law and exclusions
+
+19.1 Applicable Law
+
+This EULA is governed by the laws of New South Wales (NSW), Australia, and the
+parties irrevocably and unconditionally submit to the exclusive jurisdiction of
+the courts of NSW, Australia.
+
+19.2 Arbitration
+
+Except in circumstances where a party seeks urgent injunctive relief, before
+commencing any court proceedings, if any disputes arises under this EULA the
+parties will negotiate in good faith to resolve the dispute and if the dispute
+has not been resolved within sixty (60) calendar days by the relevant parties
+using their best efforts to resolve the dispute, the dispute will be referred to
+arbitration and determined under the Rules of Arbitration of the International
+Chamber of Commerce by one or more arbitrators appointed in accordance with the
+said Rules with any hearings to be held at the ICA Center in San Francisco,
+California, United States of America.
+
+19.3 Exclusion of UN Convention
+
+The terms of the United Nations Convention on Contracts for the Sale of Goods do
+not apply to this EULA.
+
+20. Entire Agreement and Severability
+
+This EULA (including any addendum or amendment to this EULA which is included
+with the Software) is the entire agreement between the Licensee and Atlassian
+relating to the Software and they supersede all prior or contemporaneous oral or
+written communications, proposals and representations with respect to the
+Software or any other subject matter covered by this EULA. If any provision of
+this EULA is held to be void, invalid, unenforceable or illegal, the other
+provisions shall continue in full force and effect.
+
+Survival
+
+Clauses 4, 5, 7, 9, 11.1, 12.2, 12.3, 13, 14, 19 and 20 shall survive any
+termination of this EULA.
+
+Should you have any questions concerning this EULA, or if you desire to contact
+Atlassian for any reason, please contact Atlassian at http://www.atlassian.com.
+
+Version 3.0 
+
+

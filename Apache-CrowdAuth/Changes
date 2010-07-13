@@ -1,0 +1,20 @@
+Revision history for Perl extension Apache::CrowdAuth.
+
+0.06  Mon Jul 16 2007
+	- Better handle undefined responses to SOAP calls (CWD-426)
+	
+0.05  Mon Jun 25 2007
+	- Fix problem where all-numeric password weren't being passed
+	  correctly in the SOAP call.
+	  
+0.04  Sun May 27 2007
+	- Implement local filesystem caching to improve performance and
+	  reduce load on Crowd server (CWD-313).
+	  
+0.03  Sun Feb 11 2007
+	- Use standard Perl packaging conventions.
+
+0.01  Sat Feb 10 21:28:13 2007
+	- original version; created by h2xs 1.23 with options
+		-AXc -n Apache::CrowdAuth
+

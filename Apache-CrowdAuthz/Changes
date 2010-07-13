@@ -1,0 +1,6 @@
+Revision history for Perl extension Apache::CrowdAuthz.
+
+0.01  Sat Oct 20 22:19:41 2007
+	- original version; created by h2xs 1.23 with options
+		-XAn Apache::CrowdAuthz
+
