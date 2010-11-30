@@ -1,7 +1,0 @@
-Changes
-Makefile.PL
-MANIFEST
-README
-t/Apache-CrowdAuth.t
-lib/Apache/CrowdAuth.pm
-META.yml                                 Module meta-data (added by MakeMaker)

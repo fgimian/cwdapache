@@ -1,6 +1,0 @@
-Revision history for Perl extension Atlassian::Crowd.
-
-0.01  Tue Oct 16 21:42:07 2007
-	- original version; created by h2xs 1.23 with options
-		-XAn Atlassian::Crowd
-
