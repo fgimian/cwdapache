@@ -1,0 +1,16 @@
+DocumentRoot htdocs
+Listen 8080
+<IfModule !auth_basic_module>
+    LoadModule auth_basic_module $APACHE_MODULES_DIR/mod_auth_basic.so
+</IfModule>
+<IfModule !authz_user_module>
+    LoadModule authz_user_module $APACHE_MODULES_DIR/mod_authz_user.so
+</IfModule>
+<IfModule !autoindex_module>
+    LoadModule autoindex_module $APACHE_MODULES_DIR/mod_autoindex.so
+</IfModule>
+<IfModule !dir_module>
+    LoadModule dir_module $APACHE_MODULES_DIR/mod_dir.so
+</IfModule>
+LoadModule authnz_crowd_module modules/mod_authnz_crowd.so
+LogLevel debug

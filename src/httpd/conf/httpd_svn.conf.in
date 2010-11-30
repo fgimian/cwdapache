@@ -1,0 +1,20 @@
+Include conf/common.conf
+
+LoadModule dav_module               $APACHE_MODULES_DIR/mod_dav.so
+LoadModule dav_svn_module           $APACHE_MODULES_DIR/mod_dav_svn.so
+LoadModule authz_svn_crowd_module   modules/mod_authz_svn_crowd.so
+
+<Location />
+    AuthBasicProvider crowd
+    AuthName test
+    AuthType Basic
+    CrowdAppName demo
+    CrowdAppPassword password
+    CrowdURL http://crowd.atlassian.test:8095/
+    DAV svn
+    SVNPath $CURDIR/httpd/svn
+    AuthzSVNCrowdAccessFile conf/svn_access.conf
+    AuthzSVNCrowdNoAuthWhenAnonymousAllowed On
+    Satisfy Any
+    Require valid-user
+</Location>
