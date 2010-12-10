@@ -19,8 +19,8 @@ httpd/conf/httpd_svn.conf : httpd/conf/httpd_svn.conf.in
 
 install:
 	cp @HTTPD_CONF@ /tmp/httpd.conf.bak
-	@HTTPD_BIN_DIR@/apxs -i -a mod_authnz_crowd.la
-	@HTTPD_BIN_DIR@/apxs -e -a -n dav_svn modules/mod_dav_svn.so
-	@HTTPD_BIN_DIR@/apxs -i -a svn/mod_authz_svn_crowd.la
-	@HTTPD_BIN_DIR@/apachectl configtest || mv /tmp/httpd.conf.bak @HTTPD_CONF@
-	@HTTPD_BIN_DIR@/apachectl graceful
+	@APXS@ -i -a mod_authnz_crowd.la
+	@APXS@ -e -a -n dav_svn modules/mod_dav_svn.so
+	@APXS@ -i -a svn/mod_authz_svn_crowd.la
+	@APACHECTL@ configtest || mv /tmp/httpd.conf.bak @HTTPD_CONF@
+	@APACHECTL@ graceful
