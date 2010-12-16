@@ -307,7 +307,7 @@ struct write_data_struct
     const request_rec *r;
     int status_code;
     bool headers_done;
-    xmlParserInputBufferPtr xml_input_buffer;
+    apr_array_header_t *response_text;
     xmlTextReaderPtr xml_reader;
     bool body_done;
     bool body_valid;
@@ -315,19 +315,16 @@ struct write_data_struct
     void *extra;
 };
 
-static bool create_xml_input_buffer(write_data_t *write_data) {
-    write_data->xml_input_buffer = log_ralloc(write_data->r, xmlAllocParserInputBuffer(XML_CHAR_ENCODING_NONE));
-    if (write_data->xml_input_buffer == NULL) {
-        return false;
-    }
-    return true;
+static void xml_reader_error(void *arg, const char *msg, xmlParserSeverities severity, xmlTextReaderLocatorPtr locator) {
+    ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, ((write_data_t *)arg)->r, "XML reader error: %s", msg);
 }
 
 static bool create_xml_reader(write_data_t *write_data) {
-    write_data->xml_reader = log_ralloc(write_data->r, xmlNewTextReader(write_data->xml_input_buffer, NULL));
+    write_data->xml_reader = log_ralloc(write_data->r, xmlReaderForMemory(write_data->response_text->elts, write_data->response_text->nelts * write_data->response_text->elt_size, NULL, NULL, 0) );
     if (write_data->xml_reader == NULL) {
         return false;
     }
+    xmlTextReaderSetErrorHandler(write_data->xml_reader, xml_reader_error, write_data);
     return true;
 }
 
@@ -339,11 +336,6 @@ static size_t write_crowd_response_header(void *ptr, size_t size, size_t nmemb, 
         write_data->headers_done = false;
         write_data->body_done = false;
         write_data->body_valid = false;
-        xmlFreeTextReader(write_data->xml_reader);
-        xmlFreeParserInputBuffer(write_data->xml_input_buffer);
-        if (!(create_xml_input_buffer(write_data) && create_xml_reader(write_data))) {
-            return -1;
-        }
     }
     if (write_data->status_code == STATUS_CODE_UNKNOWN) {
         /* Parse the status code from the status line. */
@@ -376,41 +368,43 @@ const xmlChar *(*xml_text_accessors[XML_READER_TYPE_MAX + 1])(xmlTextReaderPtr x
 static size_t write_response(void *ptr, size_t size, size_t nmemb, void *stream) {
     write_data_t *write_data = (write_data_t *)stream;
     size_t length = size * nmemb;
-    if (!write_data->body_done && write_data->status_code == HTTP_OK || write_data->status_code == HTTP_CREATED) {
-        if (xmlParserInputBufferPush(write_data->xml_input_buffer, length, ptr) < 0) {
-            ap_log_rerror(APLOG_MARK, APLOG_CRIT, 0, write_data->r, "Failed to push to XML input buffer.");
-            write_data->body_done = true;
-        }
-        bool done = false;
-        do {
-            switch (xmlTextReaderRead(write_data->xml_reader)) {
-                int node_type;
-                case 0:
-                    done = true;
-                    break;
-                case 1:
-                    node_type = xmlTextReaderNodeType(write_data->xml_reader);
-                    if (node_type < 0 || node_type > XML_READER_TYPE_MAX) {
-                        node_type = XML_READER_TYPE_NONE;
-                    }
-                    bool (*node_handler)(write_data_t *write_data, const xmlChar *local_name)
-                        = write_data->xml_node_handlers[node_type];
-                    if (node_handler == NULL) {
-                        ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, write_data->r, "Unexpected node type: %d", node_type);
-                        write_data->body_done = done = true;
-                    } else {
-                        const xmlChar *(*text_accessor)(xmlTextReaderPtr xml_reader) = xml_text_accessors[node_type];
-                        write_data->body_done = done = node_handler(write_data, text_accessor == NULL ? NULL
-                            : text_accessor(write_data->xml_reader));
-                    }
-                    break;
-                default:
-                    ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, write_data->r, "Failed to parse XML.");
-                    write_data->body_done = done = true;
-            }
-        } while (!done);
+    if (write_data->status_code == HTTP_OK || write_data->status_code == HTTP_CREATED) {
+        void *end = ptr + length;
+    	while (ptr < end)
+    		APR_ARRAY_PUSH(write_data->response_text, char) = *(char *)ptr++;
     }
     return length;
+}
+
+void parse_xml(write_data_t *write_data){
+    bool done = false;
+    do {
+        switch (xmlTextReaderRead(write_data->xml_reader)) {
+            int node_type;
+            case 0:
+                done = true;
+                break;
+            case 1:
+                node_type = xmlTextReaderNodeType(write_data->xml_reader);
+                if (node_type < 0 || node_type > XML_READER_TYPE_MAX) {
+                    node_type = XML_READER_TYPE_NONE;
+                }
+                bool (*node_handler)(write_data_t *write_data, const xmlChar *local_name)
+                    = write_data->xml_node_handlers[node_type];
+                if (node_handler == NULL) {
+                    ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, write_data->r, "Unexpected node type: %d", node_type);
+                    write_data->body_done = done = true;
+                } else {
+                    const xmlChar *(*text_accessor)(xmlTextReaderPtr xml_reader) = xml_text_accessors[node_type];
+                    write_data->body_done = done = node_handler(write_data, text_accessor == NULL ? NULL
+                        : text_accessor(write_data->xml_reader));
+                }
+                break;
+            default:
+                ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, write_data->r, "Failed to parse XML.");
+                write_data->body_done = done = true;
+        }
+    } while (!done);
 }
 
 static bool expect_xml_element(write_data_t *write_data, const xmlChar *expected_local_name,
@@ -468,9 +462,10 @@ static int crowd_request(const request_rec *r, const crowd_config *config, bool 
         .r = r,
         .status_code = STATUS_CODE_UNKNOWN,
         .xml_node_handlers = xml_node_handlers,
+        .response_text = apr_array_make(r->pool, 1, sizeof(char)),
         .extra = extra};
 
-    success = create_xml_input_buffer(&write_data) && create_xml_reader(&write_data);
+    success = write_data.response_text != NULL;
 
     struct curl_slist *headers = NULL;
     if (success) {
@@ -554,10 +549,6 @@ static int crowd_request(const request_rec *r, const crowd_config *config, bool 
                 break;
             case HTTP_OK:
             case HTTP_CREATED:
-                if (!write_data.body_valid) {
-                    ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Unrecognised response from Crowd.");
-                    success = false;
-                }
                 break;
             case HTTP_UNAUTHORIZED:
                 ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r,
@@ -572,18 +563,32 @@ static int crowd_request(const request_rec *r, const crowd_config *config, bool 
         }
     }
 
-    /* Clean up */
+    /* Clean up curl */
     if (curl_easy != NULL) {
         curl_easy_cleanup(curl_easy);
     }
     if (headers != NULL) {
         curl_slist_free_all(headers);
     }
-    if (write_data.xml_reader != NULL) {
-        xmlFreeTextReader(write_data.xml_reader);
-    }
-    if (write_data.xml_input_buffer != NULL) {
-        xmlFreeParserInputBuffer(write_data.xml_input_buffer);
+
+    if (success && (write_data.status_code == HTTP_OK || write_data.status_code == HTTP_CREATED)) {
+
+    	success = create_xml_reader(&write_data);
+
+		if (success) {
+			parse_xml(&write_data);
+		}
+
+		/* Clean up xml reader */
+		if (write_data.xml_reader != NULL) {
+			xmlFreeTextReader(write_data.xml_reader);
+		}
+
+		if (success && !write_data.body_valid) {
+			ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Unrecognised response from Crowd.");
+			success = false;
+		}
+
     }
 
     return success ? write_data.status_code : -1;

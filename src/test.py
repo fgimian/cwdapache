@@ -235,6 +235,21 @@ try:
         mock_crowd.shutdown()
         mock_crowd.socket.close()
 
+    # Test behaviour when a large response is received from Crowd.
+    class MockCrowd_largeResponse(BaseHTTPServer.BaseHTTPRequestHandler):
+        def do_POST(self):
+            self.wfile.write('HTTP/1.0 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 9\r\n\r\n<user/>\r\n')
+            self.wfile.close()
+        def do_GET(self):
+            self.wfile.write('HTTP/1.1 200 OK\r\nServer: Apache-Coyote/1.1\r\nX-Embedded-Crowd-Version: 2.1.0\r\nSet-Cookie: JSESSIONID=E04DBF0AEAE4AE218D7B4C700841618B; Path=/crowd\r\nContent-Type: application/xml\r\nContent-Length: 546\r\nDate: Mon, 13 Dec 2010 02:57:21 GMT\r\n\r\n<?xml version="1.0" encoding="UTF-8" standalone="yes"?><groups expand="group"><group name="bamboo-user"><link rel="self" href="http://localhost:8011/crowd/rest/usermanagement/1/group?groupname=bamboo-user"/></group><group name="mauswerks-web-developer"><link rel="self" href="http://localhost:8011/crowd/rest/usermanagement/1/group?groupname=mauswerks-web-developer"/></group><group name="tweetmech-web-developer"><link rel="self" href="http://localhost:8011/crowd/rest/usermanagement/1/group?groupname=tweetmech-web-developer"/></group></groups>')
+            self.wfile.close()
+    mock_crowd = start_mock_crowd(MockCrowd_largeResponse)
+    try:
+        http_get('httpd_test', 'httpd_password')
+    finally:
+        mock_crowd.shutdown()
+        mock_crowd.socket.close()
+
 finally:
     terminate_httpd()
 
