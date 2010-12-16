@@ -533,6 +533,7 @@ static int auth_checker(request_rec *r) {
 
 static void register_hooks(apr_pool_t *p)
 {
+	static const char * const pre_auth_checker[]={ "mod_authz_user.c", NULL };
     ap_hook_post_config(post_config, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_check_user_id(check_user_id, NULL, NULL, APR_HOOK_FIRST);
     ap_register_provider(
@@ -542,7 +543,7 @@ static void register_hooks(apr_pool_t *p)
         "0",                    /* Version of callback interface, not the version of the implementation. */
         &authn_crowd_provider
     );
-    ap_hook_auth_checker(auth_checker, NULL, NULL, APR_HOOK_MIDDLE);
+    ap_hook_auth_checker(auth_checker, pre_auth_checker, NULL, APR_HOOK_MIDDLE);
     ap_log_perror(APLOG_MARK, APLOG_NOTICE, 0, p, PACKAGE_STRING " installed.");
 }
 
