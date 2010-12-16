@@ -156,9 +156,13 @@ static void *copy_cookie_config(void *data, apr_pool_t *p) {
     if (copy == NULL) {
         return NULL;
     }
-    copy->domain = log_palloc(p, apr_pstrdup(p, original->domain));
-    if (copy->domain == NULL) {
-        return NULL;
+    if (original->domain == NULL) {
+    	copy->domain = NULL;
+    } else {
+		copy->domain = log_palloc(p, apr_pstrdup(p, original->domain));
+		if (copy->domain == NULL) {
+			return NULL;
+		}
     }
     copy->cookie_name = log_palloc(p, apr_pstrdup(p, original->cookie_name));
     if (copy->cookie_name == NULL) {
@@ -1193,6 +1197,7 @@ crowd_cookie_config_t *crowd_get_cookie_config(const request_rec *r, const crowd
     if (extra.result == NULL) {
         return NULL;
     }
+    extra.result->domain = NULL;
     extra.result->cookie_name = "";
     xml_node_handler_t *xml_node_handlers = make_xml_node_handlers(r);
     if (xml_node_handlers == NULL) {
@@ -1213,18 +1218,20 @@ crowd_cookie_config_t *crowd_get_cookie_config(const request_rec *r, const crowd
     if (cache_key != NULL) {
         crowd_cookie_config_t *cached = log_ralloc(r, malloc(sizeof(crowd_cookie_config_t)));
         if (cached != NULL) {
-            cached->domain = log_ralloc(r, strdup(extra.result->domain));
-            if (cached->domain == NULL) {
+        	if (extra.result->domain != NULL) {
+        		cached->domain = log_ralloc(r, strdup(extra.result->domain));
+                if (cached->domain == NULL) {
+                    free(cached);
+                    return;
+                }
+        	}
+            cached->cookie_name = log_ralloc(r, strdup(extra.result->cookie_name));
+            if (cached->cookie_name == NULL) {
+                free(cached->domain);
                 free(cached);
             } else {
-                cached->cookie_name = log_ralloc(r, strdup(extra.result->cookie_name));
-                if (cached->cookie_name == NULL) {
-                    free(cached->domain);
-                    free(cached);
-                } else {
-                    cached->secure = extra.result->secure;
-                    cache_put(cookie_config_cache, cache_key, cached, r);
-                }
+                cached->secure = extra.result->secure;
+                cache_put(cookie_config_cache, cache_key, cached, r);
             }
         }
     }
