@@ -48,7 +48,7 @@ typedef struct
     bool create_sso_set;
 } authnz_crowd_dir_config;
 
-const module AP_MODULE_DECLARE_DATA authnz_crowd_module;
+module AP_MODULE_DECLARE_DATA authnz_crowd_module;
 
 static apr_array_header_t *dir_configs = NULL;
 
@@ -547,7 +547,7 @@ static void register_hooks(apr_pool_t *p)
     ap_log_perror(APLOG_MARK, APLOG_NOTICE, 0, p, PACKAGE_STRING " installed.");
 }
 
-const module AP_MODULE_DECLARE_DATA authnz_crowd_module =
+module AP_MODULE_DECLARE_DATA authnz_crowd_module =
 {
     STANDARD20_MODULE_STUFF,
     create_dir_config,
