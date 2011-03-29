@@ -22,5 +22,7 @@ install:
 	@APXS@ -i -a mod_authnz_crowd.la
 	@APXS@ -e -a -n dav_svn modules/mod_dav_svn.so
 	@APXS@ -i -a svn/mod_authz_svn_crowd.la
+	if [ -e /etc/apache2/mods-enabled/dav.load ]; then mv /etc/apache2/mods-enabled/dav.load /etc/apache2/mods-enabled/1dav.load; fi
+	if [ -e /etc/apache2/mods-enabled/dav_svn.load ]; then mv /etc/apache2/mods-enabled/dav_svn.load /etc/apache2/mods-enabled/1dav_svn.load; fi
 	@APACHECTL@ configtest || mv /tmp/httpd.conf.bak @HTTPD_CONF@
 	@APACHECTL@ graceful
