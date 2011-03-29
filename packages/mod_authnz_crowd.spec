@@ -1,5 +1,5 @@
 Name:           mod_authnz_crowd
-Version:        2.0.1
+Version:        2.0.2
 Release:        1%{?dist}
 Summary:        Modules for integrating Apache httpd and Subversion with Atlassian Crowd
 
