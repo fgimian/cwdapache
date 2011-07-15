@@ -13,6 +13,7 @@
 #include <curl/curl.h>
 
 /* libxml includes */
+#include <libxml/parser.h>
 #include <libxml/xmlIO.h>
 #include <libxml/xmlreader.h>
 
@@ -75,12 +76,14 @@ void crowd_init() {
         fprintf(stderr, PACKAGE_STRING " failed to initialise libcurl.");
         exit(1);
     }
+    xmlInitParser();
 }
 
 /**
  * Should be called after the final use of the Crowd Client.
  */
 void crowd_cleanup() {
+    xmlCleanupParser();
     curl_global_cleanup();
     free(user_xml_name);
     free(groups_xml_name);
