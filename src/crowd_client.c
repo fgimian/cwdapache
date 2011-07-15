@@ -482,7 +482,7 @@ static int crowd_request(const request_rec *r, const crowd_config *config, bool 
         success = add_header(r, &headers, "Content-Type: application/xml; charset=\"utf-8\"");
     }
 
-    CURL *curl_easy;
+    CURL *curl_easy = NULL;
     if (success) {
         curl_easy = curl_easy_init();
         if (curl_easy == NULL) {
@@ -649,7 +649,7 @@ crowd_authenticate_result crowd_authenticate(const request_rec *r, const crowd_c
     const char *password) {
 
     /* Check the cache */
-    char *cache_key;
+    char *cache_key = NULL;
     if (auth_cache != NULL) {
         cache_key = make_user_cache_key(user, r, config);
         if (cache_key != NULL) {
@@ -1225,7 +1225,7 @@ crowd_cookie_config_t *crowd_get_cookie_config(const request_rec *r, const crowd
         		cached->domain = log_ralloc(r, strdup(extra.result->domain));
                 if (cached->domain == NULL) {
                     free(cached);
-                    return;
+                    return NULL;
                 }
         	}
             cached->cookie_name = log_ralloc(r, strdup(extra.result->cookie_name));

@@ -217,7 +217,7 @@ get_access_conf(request_rec *r, authz_svn_config_rec *conf, const char *username
         }
     }
 
-  if (username == NULL) {
+  if (username == NULL || access_conf == NULL) {
     return access_conf;
   }
   
@@ -314,7 +314,7 @@ req_check_access(request_rec *r,
   const char *cleaned_uri;
   int trailing_slash;
   const char *repos_name;
-  const char *dest_repos_name;
+  const char *dest_repos_name = NULL;
   const char *relative_path;
   const char *repos_path;
   const char *dest_repos_path = NULL;

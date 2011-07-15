@@ -5,6 +5,7 @@
 #include "cache.h"
 
 static apr_status_t cache_destroy(void *data) {
+    return APR_SUCCESS;
 }
 
 cache_t *cache_create(const char *name, apr_pool_t *pool, apr_time_t max_age, unsigned int max_entries,

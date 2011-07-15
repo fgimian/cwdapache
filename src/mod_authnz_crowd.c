@@ -169,7 +169,7 @@ static const char *set_crowd_url(cmd_parms *parms, void *mconfig, const char *w)
 {
     // Ignore empty URLs.  Will be reported as a missing parameter.
     if (*w == '\0') {
-        return;
+        return NULL;
     }
     // Add a trailing slash if one does not already exist.
     if (w[strlen(w) - 1] != '/') {
