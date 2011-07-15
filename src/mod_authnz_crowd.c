@@ -353,8 +353,8 @@ static authn_status authn_crowd_check_password(request_rec *r, const char *user,
                             }
                         }
                         char *cookie = log_ralloc(r,
-                            apr_psprintf(r->pool, "%s=%s%s%s;Version=1", cookie_config->cookie_name, token, domain,
-                            cookie_config->secure ? ";Secure" : ""));
+                            apr_psprintf(r->pool, "%s=%s%s%s;Version=1;Path=/", cookie_config->cookie_name, token,
+                            domain, cookie_config->secure ? ";Secure" : ""));
                         if (cookie != NULL) {
                             apr_table_add(r->err_headers_out, "Set-Cookie", cookie);
                         }
