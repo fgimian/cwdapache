@@ -39,7 +39,7 @@ static void cache_clean(cache_t *cache, const request_rec *r) {
         apr_hash_set(cache->table, oldest->key, APR_HASH_KEY_STRING, NULL);
         cache->oldest = oldest->younger;
         if (cache->oldest == NULL) {
-            cache->youngest == NULL;
+            cache->youngest = NULL;
         }
         cache->free_data(oldest->value);
         free(oldest->key);
