@@ -191,7 +191,7 @@ bool crowd_cache_create(apr_pool_t *pool, apr_time_t max_age, unsigned int max_e
     if (groups_cache == NULL) {
         return false;
     }
-    cookie_config_cache = cache_create("cookie config", pool, max_age, max_entries, copy_cookie_config, free);
+    cookie_config_cache = cache_create("cookie config", pool, max_age, max_entries, copy_cookie_config, free_cookie_config);
     if (cookie_config_cache == NULL) {
         return false;
     }
