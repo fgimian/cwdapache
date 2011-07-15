@@ -169,7 +169,7 @@ static const command_rec authz_svn_cmds[] =
                 OR_AUTHCFG,
                 "Set to 'Upper' or 'Lower' to convert the username before "
                 "checking for authorization."),
-  { NULL }
+  {0}
 };
 
 /*
@@ -719,7 +719,7 @@ auth_checker(request_rec *r)
  */
 
 static void
-register_hooks(apr_pool_t *p)
+register_hooks(apr_pool_t *p __attribute__((unused)))
 {
   static const char * const mod_ssl[] = { "mod_ssl.c", NULL };
 

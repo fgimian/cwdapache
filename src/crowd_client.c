@@ -322,7 +322,8 @@ struct write_data_struct
     void *extra;
 };
 
-static void xml_reader_error(void *arg, const char *msg, xmlParserSeverities severity, xmlTextReaderLocatorPtr locator) {
+static void xml_reader_error(void *arg, const char *msg, xmlParserSeverities severity __attribute__((unused)),
+    xmlTextReaderLocatorPtr locator __attribute__((unused))) {
     ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, ((write_data_t *)arg)->r, "XML reader error: %s", msg);
 }
 
@@ -434,12 +435,12 @@ static xml_node_handler_t *make_xml_node_handlers(const request_rec *r) {
     return (xml_node_handler_t *) array->elts;
 }
 
-static bool handle_end_of_data(write_data_t *write_data, const xmlChar *text) {
+static bool handle_end_of_data(write_data_t *write_data, const xmlChar *text __attribute__((unused))) {
     write_data->body_valid = true;
     return true;
 }
 
-static bool handle_ignored_elements(write_data_t *write_data, const xmlChar* text) {
+static bool handle_ignored_elements(write_data_t *write_data, const xmlChar* text __attribute__((unused))) {
     if (!xmlTextReaderIsEmptyElement(write_data->xml_reader)) {
         // TODO: Not yet required
         return true;
@@ -701,7 +702,7 @@ typedef struct {
 } forwarded_for_data_t;
 
 static const char *make_create_session_url(const request_rec *r, const crowd_config *config, CURL *curl_easy,
-    const void *extra) {
+    const void *extra __attribute__((unused))) {
     return make_url(r, config, curl_easy, NULL, "%srest/usermanagement/1/session");
 }
 
@@ -764,7 +765,7 @@ static const char *get_validation_factors(const request_rec *r, const char *forw
 }
 
 const char *get_forwarded_for(const request_rec *r) {
-    forwarded_for_data_t forwarded_for_data = {r};
+    forwarded_for_data_t forwarded_for_data = { .r = r };
     apr_table_do(check_header, &forwarded_for_data, r->headers_in, NULL);
     return forwarded_for_data.forwarded_for;
 }
@@ -848,25 +849,28 @@ static bool handle_crowd_validate_session_user_element(write_data_t *write_data,
     if (user == NULL) {
         return true;
     }
-    *data->user = log_ralloc(write_data->r, apr_pstrdup(write_data->r->pool, user));
+    *data->user = log_ralloc(write_data->r, apr_pstrdup(write_data->r->pool, (char const*)user));
     if (*data->user != NULL) {
         return handle_end_of_data(write_data, text);
     }
     return true;
 }
 
-static bool handle_crowd_validate_session_token_end(write_data_t *write_data, const xmlChar *text) {
+static bool handle_crowd_validate_session_token_end(write_data_t *write_data,
+    const xmlChar *text __attribute__((unused))) {
     write_data->xml_node_handlers[XML_READER_TYPE_ELEMENT] = handle_crowd_validate_session_user_element;
     write_data->xml_node_handlers[XML_READER_TYPE_TEXT] = NULL;
     write_data->xml_node_handlers[XML_READER_TYPE_END_ELEMENT] = NULL;
     return false;
 }
 
-static bool handle_crowd_validate_session_token_text(write_data_t *write_data, const xmlChar *text) {
+static bool handle_crowd_validate_session_token_text(write_data_t *write_data __attribute__((unused)),
+    const xmlChar *text __attribute__((unused))) {
     return false;
 }
 
-static bool handle_crowd_validate_session_token_element(write_data_t *write_data, const xmlChar *text) {
+static bool handle_crowd_validate_session_token_element(write_data_t *write_data,
+    const xmlChar *text __attribute__((unused))) {
     write_data->xml_node_handlers[XML_READER_TYPE_ELEMENT] = NULL;
     write_data->xml_node_handlers[XML_READER_TYPE_TEXT] = handle_crowd_validate_session_token_text;
     write_data->xml_node_handlers[XML_READER_TYPE_END_ELEMENT] = handle_crowd_validate_session_token_end;
@@ -977,17 +981,17 @@ static bool handle_crowd_groups_group_element(write_data_t *write_data, const xm
     if (groupName == NULL) {
         return true;
     }
-    groupName = log_ralloc(write_data->r, apr_pstrdup(write_data->r->pool, groupName));
+    groupName = log_ralloc(write_data->r, apr_pstrdup(write_data->r->pool, (char const*)groupName));
     if (groupName == NULL) {
         return true;
     }
-    APR_ARRAY_PUSH(((groups_data *) write_data->extra)->user_groups, const char *) = groupName;
+    APR_ARRAY_PUSH(((groups_data *) write_data->extra)->user_groups, const char *) = (char const*)groupName;
     write_data->xml_node_handlers[XML_READER_TYPE_ELEMENT] = handle_ignored_elements;
     write_data->xml_node_handlers[XML_READER_TYPE_END_ELEMENT] = handle_crowd_groups_group_end;
     return false;
 }
 
-static bool handle_crowd_groups_group_end(write_data_t *write_data, const xmlChar* text) {
+static bool handle_crowd_groups_group_end(write_data_t *write_data, const xmlChar* text __attribute__((unused))) {
     write_data->xml_node_handlers[XML_READER_TYPE_ELEMENT] = handle_crowd_groups_group_element;
     write_data->xml_node_handlers[XML_READER_TYPE_END_ELEMENT] = handle_end_of_data;
     return false;
@@ -1053,7 +1057,7 @@ apr_array_header_t *crowd_user_groups(const char *username, const request_rec *r
             return NULL;
         }
         data.start_index += BATCH_SIZE;
-    } while (user_groups->nelts == data.start_index);
+    } while ((unsigned)(user_groups->nelts) == data.start_index);
 
     /* Cache result */
     if (cache_key != NULL) {
@@ -1084,7 +1088,8 @@ apr_array_header_t *crowd_user_groups(const char *username, const request_rec *r
     return user_groups;
 }
 
-static const char *make_cookie_config_url(const request_rec *r, const crowd_config *config, CURL *curl_easy, const void *extra) {
+static const char *make_cookie_config_url(const request_rec *r, const crowd_config *config, CURL *curl_easy,
+    const void *extra __attribute__((unused))) {
     return make_url(r, config, curl_easy, NULL, "%srest/usermanagement/1/config/cookie");
 }
 
@@ -1123,7 +1128,8 @@ static bool handle_crowd_cookie_config_secure_text(write_data_t *write_data, con
     return false;
 }
 
-static bool handle_crowd_cookie_config_secure_end(write_data_t *write_data, const xmlChar *text) {
+static bool handle_crowd_cookie_config_secure_end(write_data_t *write_data,
+    const xmlChar *text __attribute__((unused))) {
     write_data->xml_node_handlers[XML_READER_TYPE_ELEMENT] = handle_crowd_cookie_config_name_element;
     write_data->xml_node_handlers[XML_READER_TYPE_TEXT] = NULL;
     write_data->xml_node_handlers[XML_READER_TYPE_END_ELEMENT] = NULL;
@@ -1151,7 +1157,8 @@ static bool handle_crowd_cookie_config_domain_text(write_data_t *write_data, con
     return false;
 }
 
-static bool handle_crowd_cookie_config_domain_end(write_data_t *write_data, const xmlChar *text) {
+static bool handle_crowd_cookie_config_domain_end(write_data_t *write_data,
+    const xmlChar *text __attribute__((unused))) {
     write_data->xml_node_handlers[XML_READER_TYPE_ELEMENT] = handle_crowd_cookie_config_secure_element;
     write_data->xml_node_handlers[XML_READER_TYPE_TEXT] = NULL;
     write_data->xml_node_handlers[XML_READER_TYPE_END_ELEMENT] = NULL;

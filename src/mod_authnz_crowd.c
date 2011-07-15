@@ -7,10 +7,12 @@
 #include "apr_xlate.h"
 
 /* Apache httpd includes */
+#include "ap_provider.h"
 #include "httpd.h"
 #include "http_core.h"
 #include "http_config.h"
 #include "http_log.h"
+#include "http_request.h"
 #include "mod_auth.h"
 
 #undef PACKAGE_BUGREPORT
@@ -26,13 +28,11 @@
 
 #include "mod_authnz_crowd.h"
 
-typedef struct
+static struct
 {
     const char *cache_max_entries_string;
     const char *cache_max_age_string;
-} authnz_crowd_process_config_t;
-
-authnz_crowd_process_config_t authnz_crowd_process_config = {}; 
+} authnz_crowd_process_config;
 
 typedef struct
 {
@@ -183,12 +183,13 @@ static const char *set_crowd_url(cmd_parms *parms, void *mconfig, const char *w)
     return set_once(parms, &(config->crowd_config->crowd_url), w);
 }
 
-static const char *set_crowd_cache_max_age(cmd_parms *parms, void *mconfig, const char *w)
+static const char *set_crowd_cache_max_age(cmd_parms *parms, void *mconfig __attribute__((unused)),
+    const char *w __attribute__((unused)))
 {
     return set_once(parms, &(authnz_crowd_process_config.cache_max_age_string), w);
 }
 
-static const char *set_crowd_cache_max_entries(cmd_parms *parms, void *mconfig, const char *w)
+static const char *set_crowd_cache_max_entries(cmd_parms *parms, void *mconfig __attribute__((unused)), const char *w)
 {
     return set_once(parms, &(authnz_crowd_process_config.cache_max_entries_string), w);
 }
@@ -230,7 +231,7 @@ static const command_rec commands[] =
         "'On' if single-sign on cookies should be accepted; 'Off' otherwise (default = On)"),
     AP_INIT_FLAG("CrowdCreateSSO", set_crowd_create_sso, NULL, OR_AUTHCFG,
         "'On' if single-sign on cookies should be created; 'Off' otherwise (default = On)"),
-    {NULL}
+    {0}
 };
 
 static authnz_crowd_dir_config *get_config(request_rec *r) {
@@ -246,7 +247,7 @@ typedef struct {
     request_rec *r;
     authnz_crowd_dir_config *config;
     char *cookie_name;
-    int cookie_name_len;
+    size_t cookie_name_len;
     char *token;
 } check_for_cookie_data_t;
 
@@ -292,7 +293,7 @@ static int check_user_id(request_rec *r) {
     if (config == NULL || !(config->accept_sso)) {
         return DECLINED;
     }
-    check_for_cookie_data_t data = {r, config};
+    check_for_cookie_data_t data = { .r = r, .config = config };
     apr_table_do(check_for_cookie, &data, r->headers_in, NULL);
     if (data.token == NULL) {
         return DECLINED;
@@ -344,8 +345,8 @@ static authn_status authn_crowd_check_password(request_rec *r, const char *user,
                     if (result == CROWD_AUTHENTICATE_SUCCESS && token != NULL) {
                         char *domain = "";
                         if (cookie_config->domain != NULL && cookie_config->domain[0] == '.') {
-                            int domainlen = strlen(cookie_config->domain);
-                            int hostlen = strlen(r->hostname);
+                            size_t domainlen = strlen(cookie_config->domain);
+                            size_t hostlen = strlen(r->hostname);
                             if (hostlen > domainlen
                                 && strcmp(cookie_config->domain, r->hostname + hostlen - domainlen) == 0) {
                                 domain = apr_psprintf(r->pool, ";Domain=%s", cookie_config->domain);
@@ -385,21 +386,21 @@ static const authn_provider authn_crowd_provider =
     NULL                            /* Callback for HTTP Digest authentication */
 };
 
-static unsigned int parse_number(const char *string, const char *name, apr_int64_t min, apr_int64_t max,
-    apr_int64_t default_value, server_rec *s) {
+static unsigned int parse_number(const char *string, const char *name, unsigned int min, unsigned int max,
+    unsigned int default_value, server_rec *s) {
     if (string == NULL) {
         return default_value;
     }
     apr_int64_t value = apr_atoi64(string);
-    if (errno != 0 || value > max || value < min) {
+    if (errno != 0 || value < 0 || (apr_uint64_t)value > max || (apr_uint64_t)value < min) {
         ap_log_error(APLOG_MARK, APLOG_EMERG, errno, s, "Could not parse %s: '%s'", name, string);
         exit(1);
     }
-    return value;
+    return (unsigned int)value;
 }
 
 /* Called after configuration is set, to finalise it. */
-static int post_config(apr_pool_t *pconf, apr_pool_t *plog, apr_pool_t *ptemp, server_rec *s)
+static int post_config(apr_pool_t *pconf, apr_pool_t *plog __attribute__((unused)), apr_pool_t *ptemp, server_rec *s)
 {
 
     /* Create the caches, if required. */
@@ -409,7 +410,7 @@ static int post_config(apr_pool_t *pconf, apr_pool_t *plog, apr_pool_t *ptemp, s
     if (cache_max_entries > 0) {
         apr_time_t cache_max_age
             = apr_time_from_sec(parse_number(authnz_crowd_process_config.cache_max_age_string, "CrowdCacheMaxAge", 1,
-            APR_INT64_MAX, 60, s));
+            UINT_MAX, 60, s));
         if (!crowd_cache_create(pconf, cache_max_age, cache_max_entries)) {
             exit(1);
         }
@@ -435,7 +436,7 @@ static int post_config(apr_pool_t *pconf, apr_pool_t *plog, apr_pool_t *ptemp, s
 
             /* Parse the timeout parameter, if specified */
             crowd_config->crowd_timeout
-                = parse_number((*dir_config)->crowd_timeout_string, "CrowdTimeout", 0, LONG_MAX, 0, s);
+                = parse_number((*dir_config)->crowd_timeout_string, "CrowdTimeout", 0, UINT_MAX, 0, s);
 
             /* If no basic auth character encodings are specified, setup ISO-8859-1. */
             if (apr_is_empty_array((*dir_config)->basic_auth_xlates)) {
