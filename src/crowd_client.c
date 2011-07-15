@@ -83,8 +83,8 @@ void crowd_init() {
  * Should be called after the final use of the Crowd Client.
  */
 void crowd_cleanup() {
-    xmlCleanupParser();
-    curl_global_cleanup();
+    // Don't clean up libxml2 or libcurl as their's no guarantee that we're
+    // the only people in our process using them.
     free(user_xml_name);
     free(groups_xml_name);
     free(group_xml_name);
