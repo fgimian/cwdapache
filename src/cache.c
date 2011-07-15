@@ -4,7 +4,21 @@
 
 #include "cache.h"
 
-static apr_status_t cache_destroy(void *data) {
+static void cache_clean(cache_t *, const request_rec *);
+
+static apr_status_t cache_destroy(void * const data) {
+    cache_t* const cache = data;
+    apr_status_t const locked = apr_thread_mutex_lock(cache->mutex);
+    if (locked != APR_SUCCESS) {
+        return locked;
+    }
+
+    cache->max_entries = 0;
+    cache_clean(cache, NULL);
+
+    apr_thread_mutex_t* const mutex = cache->mutex;
+    cache->mutex = NULL;
+    apr_thread_mutex_unlock(mutex);
     return APR_SUCCESS;
 }
 
@@ -35,7 +49,9 @@ static void cache_clean(cache_t *cache, const request_rec *r) {
     while (cache->oldest != NULL
         && (apr_hash_count(cache->table) > cache->max_entries || cache->oldest->expiry < apr_time_now())) {
         cache_entry_t *oldest = cache->oldest;
-        ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Cache '%s' expiry for '%s'", cache->name, (char *) oldest->key);
+        if (r != NULL) {
+            ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Cache '%s' expiry for '%s'", cache->name, (char *) oldest->key);
+        }
         apr_hash_set(cache->table, oldest->key, APR_HASH_KEY_STRING, NULL);
         cache->oldest = oldest->younger;
         if (cache->oldest == NULL) {
