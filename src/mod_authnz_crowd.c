@@ -46,6 +46,8 @@ typedef struct
     bool accept_sso_set;
     bool create_sso;
     bool create_sso_set;
+    bool ssl_verify_peer_set;
+
 } authnz_crowd_dir_config;
 
 module AP_MODULE_DECLARE_DATA authnz_crowd_module;
@@ -72,6 +74,7 @@ static void *create_dir_config(apr_pool_t *p, char *dir)
     if (dir_config->crowd_config == NULL) {
         exit(1);
     }
+    dir_config->crowd_config->crowd_ssl_verify_peer = true;
     dir_config->basic_auth_xlates = log_palloc(p, apr_array_make(p, 0, sizeof(apr_xlate_t *)));
     if (dir_config->basic_auth_xlates == NULL) {
         exit(1);
@@ -165,6 +168,17 @@ static const char *set_crowd_timeout(cmd_parms *parms, void *mconfig, const char
     return set_once(parms, &(config->crowd_timeout_string), w);
 }
 
+static const char *set_crowd_cert_path(cmd_parms *parms, void *mconfig, const char *w)
+{
+    // Ignore empty URLs.  Will be reported as a missing parameter.
+    if (*w == '\0') {
+        return;
+    }
+
+    authnz_crowd_dir_config *config = (authnz_crowd_dir_config *) mconfig;
+    return set_once(parms, &(config->crowd_config->crowd_cert_path), w);
+}
+
 static const char *set_crowd_url(cmd_parms *parms, void *mconfig, const char *w)
 {
     // Ignore empty URLs.  Will be reported as a missing parameter.
@@ -205,6 +219,12 @@ static const char *set_crowd_create_sso(cmd_parms *parms, void *mconfig, int on)
     return set_flag_once(parms, &(config->create_sso), &(config->create_sso_set), on);
 }
 
+static const char *set_crowd_ssl_verify_peer(cmd_parms *parms, void *mconfig, int on)
+{
+    authnz_crowd_dir_config *config = (authnz_crowd_dir_config *) mconfig;
+    return set_flag_once(parms, &(config->crowd_config->crowd_ssl_verify_peer), &(config->ssl_verify_peer_set), on);
+}
+
 static const command_rec commands[] =
 {
     AP_INIT_FLAG("AuthzCrowdAuthoritative", set_authz_crowd_authoritative, NULL, OR_AUTHCFG,
@@ -220,6 +240,7 @@ static const command_rec commands[] =
     AP_INIT_TAKE1("CrowdTimeout", set_crowd_timeout, NULL, OR_AUTHCFG,
         "The maximum length of time, in seconds, to wait for a response from Crowd (default or 0 = no timeout)"),
     AP_INIT_TAKE1("CrowdURL", set_crowd_url, NULL, OR_AUTHCFG, "The base URL of the Crowd server"),
+    AP_INIT_TAKE1("CrowdCertPath", set_crowd_cert_path, NULL, OR_AUTHCFG, "The path to the SSL certificate file to supply to curl for Crowd over SSL"),
     AP_INIT_TAKE1("CrowdCacheMaxAge", set_crowd_cache_max_age, NULL, RSRC_CONF,
         "The maximum length of time that successful results from Crowd can be cached, in seconds"
         " (default = 60 seconds)"),
@@ -230,6 +251,8 @@ static const command_rec commands[] =
         "'On' if single-sign on cookies should be accepted; 'Off' otherwise (default = On)"),
     AP_INIT_FLAG("CrowdCreateSSO", set_crowd_create_sso, NULL, OR_AUTHCFG,
         "'On' if single-sign on cookies should be created; 'Off' otherwise (default = On)"),
+    AP_INIT_FLAG("CrowdSSLVerifyPeer", set_crowd_ssl_verify_peer, NULL, OR_AUTHCFG,
+            "'On' if SSL certificate validation should occur when connecting to Crowd; 'Off' otherwise (default = On)"),
     {NULL}
 };
 
@@ -430,6 +453,14 @@ static int post_config(apr_pool_t *pconf, apr_pool_t *plog, apr_pool_t *ptemp, s
                 || crowd_config->crowd_url == NULL)) {
                 ap_log_error(APLOG_MARK, APLOG_EMERG, 0, s,
                     "Missing CrowdAppName, CrowdAppPassword or CrowdURL for a directory.");
+                exit(1);
+            }
+
+            if ((crowd_config->crowd_app_name != NULL || crowd_config->crowd_app_password != NULL
+                || crowd_config->crowd_url != NULL) 
+                && (crowd_config->crowd_ssl_verify_peer == true && crowd_config->crowd_cert_path == NULL)) {
+                ap_log_error(APLOG_MARK, APLOG_EMERG, 0, s,
+                        "CrowdSSLVerifyPeer is On but CrowdCertPath is unspecified.");
                 exit(1);
             }
 
