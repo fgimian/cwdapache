@@ -14,6 +14,7 @@ typedef struct {
     const char *crowd_app_password;     /* Application password used to authenticate with Crowd */
     const char *crowd_url;              /* Base URL of the Crowd server */
     long crowd_timeout;                 /* Crowd response timeout, in seconds, or 0 for no timeout */
+    const char *groups_env_name;        /* Name of the environment variable in which to store a space-delimited list of groups that the remote user belongs to */
 } crowd_config;
 
 /**

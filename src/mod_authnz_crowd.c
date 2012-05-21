@@ -34,6 +34,8 @@ static struct
     const char *cache_max_age_string;
 } authnz_crowd_process_config;
 
+#define CROWD_GROUPS_ENV_NAME "CrowdGroupsEnvName"
+
 typedef struct
 {
     bool authoritative;
@@ -206,6 +208,12 @@ static const char *set_crowd_create_sso(cmd_parms *parms, void *mconfig, int on)
     return set_flag_once(parms, &(config->create_sso), &(config->create_sso_set), on);
 }
 
+static const char *set_crowd_groups_env_name(cmd_parms *parms, void *mconfig, const char *w)
+{
+    authnz_crowd_dir_config *config = (authnz_crowd_dir_config *) mconfig;
+    return set_once(parms, &(config->crowd_config->groups_env_name), w);
+}
+
 static const command_rec commands[] =
 {
     AP_INIT_FLAG("AuthzCrowdAuthoritative", set_authz_crowd_authoritative, NULL, OR_AUTHCFG,
@@ -231,6 +239,8 @@ static const command_rec commands[] =
         "'On' if single-sign on cookies should be accepted; 'Off' otherwise (default = On)"),
     AP_INIT_FLAG("CrowdCreateSSO", set_crowd_create_sso, NULL, OR_AUTHCFG,
         "'On' if single-sign on cookies should be created; 'Off' otherwise (default = On)"),
+    AP_INIT_TAKE1(CROWD_GROUPS_ENV_NAME, set_crowd_groups_env_name, NULL, OR_AUTHCFG,
+        "Name of the environment variable in which to store a space-delimited list of groups that the remote user belongs to"),
     {0}
 };
 
@@ -288,6 +298,62 @@ static int check_for_cookie(void *rec, const char *key, const char *value) {
     return 1;
 }
 
+#define GRP_ENV_MAX_GROUPS 128
+#define GRP_ENV_DELIMITER " "
+#define GRP_ENV_DELIMITER_LEN (sizeof(GRP_ENV_DELIMITER) - sizeof(char))
+static void crowd_set_groups_env_variable(request_rec *r) {
+    authnz_crowd_dir_config *config = get_config(r);
+    const char *group_env_name = config->crowd_config->groups_env_name;
+    if (group_env_name == NULL) {
+        ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, CROWD_GROUPS_ENV_NAME " undefined; returning.");
+        return;
+    }
+
+    apr_array_header_t *user_groups = authnz_crowd_user_groups(r->user, r);
+    if (user_groups == NULL) {
+        ap_log_rerror(APLOG_MARK, APLOG_NOTICE, 0, r, "While setting groups environment variable '%s' for remote user '%s': authnz_crowd_user_groups() returned NULL.", group_env_name, r->user); 
+        return;
+    }
+
+    apr_size_t ngrps = user_groups->nelts;
+    if (ngrps <= 0) {
+        apr_table_set(r->subprocess_env, group_env_name, "");
+        ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Set groups environment variable '%s' for remote user '%s' to empty.", group_env_name, r->user);
+        return;
+    }
+
+    if (ngrps > GRP_ENV_MAX_GROUPS) {
+        ap_log_rerror(APLOG_MARK, APLOG_NOTICE, 0, r, "While setting groups environment variable '%s' for remote user '%s': Value will be clipped as number of groups (%d) exceeds GRP_ENV_MAX_GROUPS (%d).", group_env_name, r->user, ngrps, GRP_ENV_MAX_GROUPS); 
+        ngrps = GRP_ENV_MAX_GROUPS;
+    }
+
+    apr_size_t nvec = ngrps + (ngrps - 1); /* Groups + conjunctive delimiters */
+    struct iovec *iov = apr_pcalloc(r->pool, sizeof(struct iovec) * nvec);
+    int i, k;
+    for (i = 0, k = 0; i < ngrps; i++) {
+        if (i >= 1) {
+            /* Join previous entry with a delimiter */
+            iov[k].iov_base = GRP_ENV_DELIMITER;
+            iov[k].iov_len = GRP_ENV_DELIMITER_LEN;
+            k++;
+        }
+
+        void *grp = APR_ARRAY_IDX(user_groups, i, void *);
+        iov[k].iov_base = grp;
+        iov[k].iov_len = strlen(grp);
+        k++;
+    }
+
+    const char *groups = apr_pstrcatv(r->pool, iov, nvec, NULL);
+    if (groups == NULL) {
+        ap_log_rerror(APLOG_MARK, APLOG_NOTICE, 0, r, "While setting groups environment variable '%s' for remote user '%s': apr_pstrcatv() returned NULL.", group_env_name, r->user);
+        return;
+    }
+
+    apr_table_set(r->subprocess_env, group_env_name, groups);
+    ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Set groups environment variable '%s' for remote user '%s' to '%s'", group_env_name, r->user, groups);
+}
+
 static int check_user_id(request_rec *r) {
     authnz_crowd_dir_config *config = get_config(r);
     if (config == NULL || !(config->accept_sso)) {
@@ -300,6 +366,7 @@ static int check_user_id(request_rec *r) {
     }
     if (crowd_validate_session(r, config->crowd_config, data.token, &r->user) == CROWD_AUTHENTICATE_SUCCESS) {
         r->ap_auth_type = "Crowd SSO";
+        crowd_set_groups_env_variable(r);
         return OK;
     }
     return DECLINED;
@@ -367,6 +434,7 @@ static authn_status authn_crowd_check_password(request_rec *r, const char *user,
             switch (result) {
                 case CROWD_AUTHENTICATE_SUCCESS:
                     ap_log_rerror(APLOG_MARK, APLOG_INFO, 0, r, "Authenticated '%s'.", xlated_user);
+                    crowd_set_groups_env_variable(r);
                     return AUTH_GRANTED;
                 case CROWD_AUTHENTICATE_FAILURE:
                     break;
