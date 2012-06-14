@@ -34,8 +34,6 @@ static struct
     const char *cache_max_age_string;
 } authnz_crowd_process_config;
 
-#define CROWD_GROUPS_ENV_NAME "CrowdGroupsEnvName"
-
 typedef struct
 {
     bool authoritative;
@@ -239,7 +237,7 @@ static const command_rec commands[] =
         "'On' if single-sign on cookies should be accepted; 'Off' otherwise (default = On)"),
     AP_INIT_FLAG("CrowdCreateSSO", set_crowd_create_sso, NULL, OR_AUTHCFG,
         "'On' if single-sign on cookies should be created; 'Off' otherwise (default = On)"),
-    AP_INIT_TAKE1(CROWD_GROUPS_ENV_NAME, set_crowd_groups_env_name, NULL, OR_AUTHCFG,
+    AP_INIT_TAKE1("CrowdGroupsEnvName", set_crowd_groups_env_name, NULL, OR_AUTHCFG,
         "Name of the environment variable in which to store a space-delimited list of groups that the remote user belongs to"),
     {0}
 };
@@ -305,13 +303,13 @@ static void crowd_set_groups_env_variable(request_rec *r) {
     authnz_crowd_dir_config *config = get_config(r);
     const char *group_env_name = config->crowd_config->groups_env_name;
     if (group_env_name == NULL) {
-        ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, CROWD_GROUPS_ENV_NAME " undefined; returning.");
+        ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "CrowdGroupsEnvName undefined; returning.");
         return;
     }
 
     apr_array_header_t *user_groups = authnz_crowd_user_groups(r->user, r);
     if (user_groups == NULL) {
-        ap_log_rerror(APLOG_MARK, APLOG_NOTICE, 0, r, "While setting groups environment variable '%s' for remote user '%s': authnz_crowd_user_groups() returned NULL.", group_env_name, r->user); 
+        ap_log_rerror(APLOG_MARK, APLOG_NOTICE, 0, r, "While setting groups environment variable '%s' for remote user '%s': authnz_crowd_user_groups() returned NULL.", group_env_name, r->user);
         return;
     }
 
@@ -323,7 +321,7 @@ static void crowd_set_groups_env_variable(request_rec *r) {
     }
 
     if (ngrps > GRP_ENV_MAX_GROUPS) {
-        ap_log_rerror(APLOG_MARK, APLOG_NOTICE, 0, r, "While setting groups environment variable '%s' for remote user '%s': Value will be clipped as number of groups (%d) exceeds GRP_ENV_MAX_GROUPS (%d).", group_env_name, r->user, ngrps, GRP_ENV_MAX_GROUPS); 
+        ap_log_rerror(APLOG_MARK, APLOG_NOTICE, 0, r, "While setting groups environment variable '%s' for remote user '%s': Value will be clipped as number of groups (%d) exceeds GRP_ENV_MAX_GROUPS (%d).", group_env_name, r->user, ngrps, GRP_ENV_MAX_GROUPS);
         ngrps = GRP_ENV_MAX_GROUPS;
     }
 
