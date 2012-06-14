@@ -521,6 +521,8 @@ static int crowd_request(const request_rec *r, const crowd_config *config, bool 
 #endif
             || curl_easy_setopt(curl_easy, CURLOPT_HTTPHEADER, headers)
             || curl_easy_setopt(curl_easy, CURLOPT_TIMEOUT, config->crowd_timeout)
+            || curl_easy_setopt(curl_easy, CURLOPT_SSL_VERIFYPEER, config->crowd_ssl_verify_peer ? 1 : 0)
+            || curl_easy_setopt(curl_easy, CURLOPT_CAINFO, config->crowd_cert_path)
             || (post && (curl_easy_setopt(curl_easy, CURLOPT_POST, 1)
             || curl_easy_setopt(curl_easy, CURLOPT_READFUNCTION, read_crowd_authentication_request)
             || curl_easy_setopt(curl_easy, CURLOPT_READDATA, &read_data)

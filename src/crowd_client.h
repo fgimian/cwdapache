@@ -13,6 +13,8 @@ typedef struct {
     const char *crowd_app_name;         /* Application name used to authenticate with Crowd */
     const char *crowd_app_password;     /* Application password used to authenticate with Crowd */
     const char *crowd_url;              /* Base URL of the Crowd server */
+    const char *crowd_cert_path;        /* Path to file containing crowd certificate authority for curl */
+    const bool *crowd_ssl_verify_peer;  /* Flag to control whether or not SSL certificates are validated */
     long crowd_timeout;                 /* Crowd response timeout, in seconds, or 0 for no timeout */
 } crowd_config;
 
