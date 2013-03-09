@@ -284,7 +284,7 @@ typedef struct {
 
 static bool is_https(request_rec *r) {
      const char *https = apr_table_get(r->subprocess_env, "HTTPS");
-     return https != NULL && strcmp(https, "on");
+     return https != NULL && !strcmp(https, "on");
 }
 
 static int check_for_cookie(void *rec, const char *key, const char *value) {
