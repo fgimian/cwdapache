@@ -28,6 +28,11 @@
 
 #include "mod_authnz_crowd.h"
 
+#if AP_SERVER_MAJORVERSION_NUMBER >= 2
+APR_DECLARE_OPTIONAL_FN(int, ssl_is_https, (conn_rec *));
+static APR_OPTIONAL_FN_TYPE(ssl_is_https) *crowd_is_https = NULL;
+#endif
+
 static struct
 {
     const char *cache_max_entries_string;
@@ -282,9 +287,22 @@ typedef struct {
     char *token;
 } check_for_cookie_data_t;
 
+/*
+ * See top of file for declaration of crowd_is_https variable.
+ * You must find https via this method because the mod_ssl
+ * hook that sets the environment variable is not run until
+ * after the check_user_id hooks.  The old method worked SOMETIMES
+ * because Apache will re-use the same subprocess for pipelined
+ * requests.
+ */
+
 static bool is_https(request_rec *r) {
-     const char *https = apr_table_get(r->subprocess_env, "HTTPS");
-     return https != NULL && !strcmp(https, "on");
+  if(!crowd_is_https)
+    crowd_is_https = APR_RETRIEVE_OPTIONAL_FN(ssl_is_https);
+  int https = 0;
+  if(crowd_is_https && crowd_is_https(r->connection))
+    https = 1;
+  return (bool)https;
 }
 
 static int check_for_cookie(void *rec, const char *key, const char *value) {
