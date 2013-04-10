@@ -51,6 +51,8 @@ typedef struct
     bool accept_sso_set;
     bool create_sso;
     bool create_sso_set;
+    bool set_http_only;
+    bool set_http_only_set;
     bool ssl_verify_peer_set;
 
 } authnz_crowd_dir_config;
@@ -75,6 +77,7 @@ static void *create_dir_config(apr_pool_t *p, char *dir)
     dir_config->authoritative = true;
     dir_config->accept_sso = true;
     dir_config->create_sso = true;
+    dir_config->set_http_only = false;
     dir_config->crowd_config = crowd_create_config(p);
     if (dir_config->crowd_config == NULL) {
         exit(1);
@@ -225,6 +228,12 @@ static const char *set_crowd_create_sso(cmd_parms *parms, void *mconfig, int on)
     return set_flag_once(parms, &(config->create_sso), &(config->create_sso_set), on);
 }
 
+static const char *set_crowd_set_http_only(cmd_parms *parms, void *mconfig, int on)
+{
+  authnz_crowd_dir_config *config = (authnz_crowd_dir_config *) mconfig;
+  return set_flag_once(parms, &(config->set_http_only), &(config->set_http_only_set), on);
+}
+
 static const char *set_crowd_ssl_verify_peer(cmd_parms *parms, void *mconfig, int on)
 {
     authnz_crowd_dir_config *config = (authnz_crowd_dir_config *) mconfig;
@@ -263,6 +272,8 @@ static const command_rec commands[] =
         "'On' if single-sign on cookies should be accepted; 'Off' otherwise (default = On)"),
     AP_INIT_FLAG("CrowdCreateSSO", set_crowd_create_sso, NULL, OR_AUTHCFG,
         "'On' if single-sign on cookies should be created; 'Off' otherwise (default = On)"),
+    AP_INIT_FLAG("CrowdSetHttpOnly", set_crowd_set_http_only, NULL, OR_AUTHCFG,
+        "'On' if single-sign on cookies should be created as HttpOnly; 'Off' otherwise (default = Off)"),
     AP_INIT_FLAG("CrowdSSLVerifyPeer", set_crowd_ssl_verify_peer, NULL, OR_AUTHCFG,
             "'On' if SSL certificate validation should occur when connecting to Crowd; 'Off' otherwise (default = On)"),
     AP_INIT_TAKE1("CrowdGroupsEnvName", set_crowd_groups_env_name, NULL, OR_AUTHCFG,
@@ -459,8 +470,8 @@ static authn_status authn_crowd_check_password(request_rec *r, const char *user,
                             }
                         }
                         char *cookie = log_ralloc(r,
-                            apr_psprintf(r->pool, "%s=%s%s%s;Version=1;Path=/", cookie_config->cookie_name, token,
-                            domain, cookie_config->secure ? ";Secure" : ""));
+                            apr_psprintf(r->pool, "%s=%s%s%s%s;Version=1;Path=/", cookie_config->cookie_name, token,
+                            domain, cookie_config->secure ? ";Secure" : "", config->set_http_only ? ";HttpOnly" : ""));
                         if (cookie != NULL) {
                             apr_table_add(r->err_headers_out, "Set-Cookie", cookie);
                         }
