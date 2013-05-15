@@ -28,6 +28,11 @@
 
 #include "mod_authnz_crowd.h"
 
+#if AP_SERVER_MAJORVERSION_NUMBER >= 2
+APR_DECLARE_OPTIONAL_FN(int, ssl_is_https, (conn_rec *));
+static APR_OPTIONAL_FN_TYPE(ssl_is_https) *crowd_is_https = NULL;
+#endif
+
 static struct
 {
     const char *cache_max_entries_string;
@@ -46,6 +51,8 @@ typedef struct
     bool accept_sso_set;
     bool create_sso;
     bool create_sso_set;
+    bool set_http_only;
+    bool set_http_only_set;
     bool ssl_verify_peer_set;
 
 } authnz_crowd_dir_config;
@@ -70,6 +77,7 @@ static void *create_dir_config(apr_pool_t *p, char *dir)
     dir_config->authoritative = true;
     dir_config->accept_sso = true;
     dir_config->create_sso = true;
+    dir_config->set_http_only = false;
     dir_config->crowd_config = crowd_create_config(p);
     if (dir_config->crowd_config == NULL) {
         exit(1);
@@ -220,6 +228,12 @@ static const char *set_crowd_create_sso(cmd_parms *parms, void *mconfig, int on)
     return set_flag_once(parms, &(config->create_sso), &(config->create_sso_set), on);
 }
 
+static const char *set_crowd_set_http_only(cmd_parms *parms, void *mconfig, int on)
+{
+  authnz_crowd_dir_config *config = (authnz_crowd_dir_config *) mconfig;
+  return set_flag_once(parms, &(config->set_http_only), &(config->set_http_only_set), on);
+}
+
 static const char *set_crowd_ssl_verify_peer(cmd_parms *parms, void *mconfig, int on)
 {
     authnz_crowd_dir_config *config = (authnz_crowd_dir_config *) mconfig;
@@ -258,6 +272,8 @@ static const command_rec commands[] =
         "'On' if single-sign on cookies should be accepted; 'Off' otherwise (default = On)"),
     AP_INIT_FLAG("CrowdCreateSSO", set_crowd_create_sso, NULL, OR_AUTHCFG,
         "'On' if single-sign on cookies should be created; 'Off' otherwise (default = On)"),
+    AP_INIT_FLAG("CrowdSetHttpOnly", set_crowd_set_http_only, NULL, OR_AUTHCFG,
+        "'On' if single-sign on cookies should be created as HttpOnly; 'Off' otherwise (default = Off)"),
     AP_INIT_FLAG("CrowdSSLVerifyPeer", set_crowd_ssl_verify_peer, NULL, OR_AUTHCFG,
             "'On' if SSL certificate validation should occur when connecting to Crowd; 'Off' otherwise (default = On)"),
     AP_INIT_TAKE1("CrowdGroupsEnvName", set_crowd_groups_env_name, NULL, OR_AUTHCFG,
@@ -282,9 +298,22 @@ typedef struct {
     char *token;
 } check_for_cookie_data_t;
 
+/*
+ * See top of file for declaration of crowd_is_https variable.
+ * You must find https via this method because the mod_ssl
+ * hook that sets the environment variable is not run until
+ * after the check_user_id hooks.  The old method worked SOMETIMES
+ * because Apache will re-use the same subprocess for pipelined
+ * requests.
+ */
+
 static bool is_https(request_rec *r) {
-     const char *https = apr_table_get(r->subprocess_env, "HTTPS");
-     return https != NULL && !strcmp(https, "on");
+  if(!crowd_is_https)
+    crowd_is_https = APR_RETRIEVE_OPTIONAL_FN(ssl_is_https);
+  int https = 0;
+  if(crowd_is_https && crowd_is_https(r->connection))
+    https = 1;
+  return (bool)https;
 }
 
 static int check_for_cookie(void *rec, const char *key, const char *value) {
@@ -441,8 +470,8 @@ static authn_status authn_crowd_check_password(request_rec *r, const char *user,
                             }
                         }
                         char *cookie = log_ralloc(r,
-                            apr_psprintf(r->pool, "%s=%s%s%s;Version=1;Path=/", cookie_config->cookie_name, token,
-                            domain, cookie_config->secure ? ";Secure" : ""));
+                            apr_psprintf(r->pool, "%s=%s%s%s%s;Version=1;Path=/", cookie_config->cookie_name, token,
+                            domain, cookie_config->secure ? ";Secure" : "", config->set_http_only ? ";HttpOnly" : ""));
                         if (cookie != NULL) {
                             apr_table_add(r->err_headers_out, "Set-Cookie", cookie);
                         }
