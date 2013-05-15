@@ -46,7 +46,9 @@ AC_SUBST([APACHE_MODULES_DIR])
 AC_CHECK_FILE([/usr/local/apache2/conf/httpd.conf], [HTTPD_CONF="/usr/local/apache2/conf/httpd.conf"], [
     AC_CHECK_FILE([/etc/httpd/conf/httpd.conf], [HTTPD_CONF="/etc/httpd/conf/httpd.conf"], [
         AC_CHECK_FILE([/etc/apache2/httpd.conf], [HTTPD_CONF="/etc/apache2/httpd.conf"], [
-            AC_MSG_ERROR([Could not locate Apache configuration file])
+            AC_CHECK_FILE([/etc/apache2/apache2.conf], [HTTPD_CONF="/etc/apache2/apache2.conf"], [
+                AC_MSG_ERROR([Could not locate Apache configuration file])
+            ])
         ])
     ])
 ])
