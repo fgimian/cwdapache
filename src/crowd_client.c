@@ -394,6 +394,10 @@ void parse_xml(write_data_t *write_data){
                 break;
             case 1:
                 node_type = xmlTextReaderNodeType(write_data->xml_reader);
+                // Ignore whitespace.
+                if (node_type == XML_READER_TYPE_SIGNIFICANT_WHITESPACE) {
+                    break;
+                }
                 if (node_type < 0 || node_type > XML_READER_TYPE_MAX) {
                     node_type = XML_READER_TYPE_NONE;
                 }
@@ -442,8 +446,20 @@ static bool handle_end_of_data(write_data_t *write_data, const xmlChar *text __a
 
 static bool handle_ignored_elements(write_data_t *write_data, const xmlChar* text __attribute__((unused))) {
     if (!xmlTextReaderIsEmptyElement(write_data->xml_reader)) {
-        // TODO: Not yet required
-        return true;
+        int depth = 0;
+        while (1) {
+           int node_type = xmlTextReaderNodeType(write_data->xml_reader);
+           if (node_type == XML_READER_TYPE_ELEMENT) {
+              depth++;
+           } else if (node_type == XML_READER_TYPE_END_ELEMENT) {
+              if (--depth == 0) {
+                 return false;
+              }
+           }
+           if (!xmlTextReaderRead(write_data->xml_reader)) {
+             return true;
+           }
+        }
     }
     return false;
 }
