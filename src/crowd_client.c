@@ -536,7 +536,7 @@ static int crowd_request(const request_rec *r, const crowd_config *config, bool 
         CURLcode curl_code = curl_easy_perform(curl_easy);
         if (curl_code != CURLE_OK) {
             ap_log_rerror(APLOG_MARK, APLOG_CRIT, 0, r,
-                "Failed to send authentication request (CURLcode %d)", curl_code);
+                "Failed to send authentication request (CURLcode %d - %s)", curl_code, curl_easy_strerror(curl_code));
             success = false;
         }
     }
