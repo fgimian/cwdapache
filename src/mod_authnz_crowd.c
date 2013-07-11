@@ -660,7 +660,7 @@ static int auth_checker(request_rec *r) {
 
 static void register_hooks(apr_pool_t *p)
 {
-	static const char * const pre_auth_checker[]={ "mod_authz_user.c", NULL };
+    static const char * const pre_auth_checker[]={ "mod_authz_user.c", NULL };
     ap_hook_post_config(post_config, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_check_user_id(check_user_id, NULL, NULL, APR_HOOK_FIRST);
     ap_register_provider(
