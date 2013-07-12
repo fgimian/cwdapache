@@ -180,7 +180,7 @@ static const char *set_crowd_cert_path(cmd_parms *parms, void *mconfig, const ch
 {
     // Ignore empty URLs.  Will be reported as a missing parameter.
     if (*w == '\0') {
-        return;
+        return NULL;
     }
 
     authnz_crowd_dir_config *config = (authnz_crowd_dir_config *) mconfig;
