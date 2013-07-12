@@ -220,7 +220,7 @@ get_access_conf(request_rec *r, authz_svn_config_rec *conf, const char *username
   if (username == NULL || access_conf == NULL) {
     return access_conf;
   }
-  
+
   /* Copy the access configuration and supplement it with the user's group memberships from Crowd. */
   svn_authz_t *user_access_conf = log_ralloc(r, apr_palloc(r->pool, sizeof(svn_authz_t)));
   if (user_access_conf == NULL) {

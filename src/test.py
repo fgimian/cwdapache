@@ -41,7 +41,7 @@ def http_get(username, password, relative_url = '/', cookie_jar = None, forwarde
 def start_httpd(config_file = 'conf/httpd.conf'):
     global httpd
     httpd = subprocess.Popen([apache_bin_dir + '/httpd', '-X', '-d', 'httpd', '-e', 'debug', '-f', config_file], stdout = subprocess.PIPE)
-    
+
 def terminate_httpd():
     httpd.kill()
     httpd.wait()
@@ -77,7 +77,7 @@ def svn_command(user, password, command):
 
 def svn_can_read(user = None, password = None, path=''):
     return svn_command(user, password, ['ls', base_url + path + '/'])
-    
+
 def svn_can_write(user = None, password = None, path = ''):
     if svn_command(user, password, ['mkdir', '-m', '', base_url + path + '/newdir']):
         svn_command(user, password, ['rm', '-m', '', base_url + path + '/newdir'])

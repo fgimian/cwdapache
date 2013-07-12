@@ -4,7 +4,7 @@
  * Header file for the Atlassian Crowd C Client
  */
 
-#include "cache.h" 
+#include "cache.h"
 
 /**
  * Configuration data structure for the Crowd Client

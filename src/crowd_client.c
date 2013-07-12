@@ -671,7 +671,7 @@ crowd_authenticate_result crowd_authenticate(const request_rec *r, const crowd_c
 
     xml_node_handler_t *xml_node_handlers = make_xml_node_handlers(r);
     if (xml_node_handlers == NULL) {
-        return CROWD_AUTHENTICATE_EXCEPTION; 
+        return CROWD_AUTHENTICATE_EXCEPTION;
     }
     xml_node_handlers[XML_READER_TYPE_ELEMENT] = handle_crowd_authentication_user_element;
     authentication_data data = {user};

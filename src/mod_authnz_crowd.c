@@ -653,7 +653,7 @@ static int auth_checker(request_rec *r) {
         }
 
     }
-    
+ 
     ap_log_rerror(APLOG_MARK, APLOG_NOTICE, 0, r, "Denied authorisation to '%s'.", r->user);
     return config->authoritative ? HTTP_UNAUTHORIZED : DECLINED;
 }
