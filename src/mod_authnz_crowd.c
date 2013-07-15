@@ -180,7 +180,7 @@ static const char *set_crowd_cert_path(cmd_parms *parms, void *mconfig, const ch
 {
     // Ignore empty URLs.  Will be reported as a missing parameter.
     if (*w == '\0') {
-        return;
+        return NULL;
     }
 
     authnz_crowd_dir_config *config = (authnz_crowd_dir_config *) mconfig;
@@ -653,14 +653,14 @@ static int auth_checker(request_rec *r) {
         }
 
     }
-    
+ 
     ap_log_rerror(APLOG_MARK, APLOG_NOTICE, 0, r, "Denied authorisation to '%s'.", r->user);
     return config->authoritative ? HTTP_UNAUTHORIZED : DECLINED;
 }
 
 static void register_hooks(apr_pool_t *p)
 {
-	static const char * const pre_auth_checker[]={ "mod_authz_user.c", NULL };
+    static const char * const pre_auth_checker[]={ "mod_authz_user.c", NULL };
     ap_hook_post_config(post_config, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_check_user_id(check_user_id, NULL, NULL, APR_HOOK_FIRST);
     ap_register_provider(

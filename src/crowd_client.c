@@ -536,7 +536,7 @@ static int crowd_request(const request_rec *r, const crowd_config *config, bool 
         CURLcode curl_code = curl_easy_perform(curl_easy);
         if (curl_code != CURLE_OK) {
             ap_log_rerror(APLOG_MARK, APLOG_CRIT, 0, r,
-                "Failed to send authentication request (CURLcode %d)", curl_code);
+                "Failed to send authentication request (CURLcode %d - %s)", curl_code, curl_easy_strerror(curl_code));
             success = false;
         }
     }
@@ -671,7 +671,7 @@ crowd_authenticate_result crowd_authenticate(const request_rec *r, const crowd_c
 
     xml_node_handler_t *xml_node_handlers = make_xml_node_handlers(r);
     if (xml_node_handlers == NULL) {
-        return CROWD_AUTHENTICATE_EXCEPTION; 
+        return CROWD_AUTHENTICATE_EXCEPTION;
     }
     xml_node_handlers[XML_READER_TYPE_ELEMENT] = handle_crowd_authentication_user_element;
     authentication_data data = {user};

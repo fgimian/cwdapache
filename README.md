@@ -10,7 +10,7 @@ Clone repository, compile and install.
     automake --force-missing --add-missing
     autoreconf
     ./configure
-    make 
+    make
     make install
 
 Modify apache config, do NOT USE .htaccess!
