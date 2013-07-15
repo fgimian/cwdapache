@@ -1236,7 +1236,9 @@ crowd_cookie_config_t *crowd_get_cookie_config(const request_rec *r, const crowd
                     free(cached);
                     return NULL;
                 }
-        	}
+            } else {
+                cached->domain = NULL;
+            }
             cached->cookie_name = log_ralloc(r, strdup(extra.result->cookie_name));
             if (cached->cookie_name == NULL) {
                 free(cached->domain);
