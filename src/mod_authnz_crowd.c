@@ -3,17 +3,17 @@
 #include <string.h>
 
 /* Apache Portable Runtime includes */
-#include "apr_strings.h"
-#include "apr_xlate.h"
+#include <apr_strings.h>
+#include <apr_xlate.h>
 
 /* Apache httpd includes */
-#include "ap_provider.h"
-#include "httpd.h"
-#include "http_core.h"
-#include "http_config.h"
-#include "http_log.h"
-#include "http_request.h"
-#include "mod_auth.h"
+#include <ap_provider.h>
+#include <httpd.h>
+#include <http_core.h>
+#include <http_config.h>
+#include <http_log.h>
+#include <http_request.h>
+#include <mod_auth.h>
 
 #undef PACKAGE_BUGREPORT
 #undef PACKAGE_NAME

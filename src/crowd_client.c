@@ -18,11 +18,11 @@
 #include <libxml/xmlreader.h>
 
 /* Apache Portable Runtime includes */
-#include "apr_strings.h"
+#include <apr_strings.h>
 
 /* Apache httpd includes */
-#include "httpd.h"
-#include "http_log.h"
+#include <httpd.h>
+#include <http_log.h>
 
 #include "util.h"
 
