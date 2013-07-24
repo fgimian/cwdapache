@@ -44,7 +44,6 @@
 #include "svn_config.h"
 #include "svn_string.h"
 #include "svn_repos.h"
-#include "svn_pools.h"
 #include "svn_dirent_uri.h"
 #include "private/svn_fspath.h"
 
@@ -164,8 +163,7 @@ static const command_rec authz_svn_cmds[] =
  * Get the, possibly cached, svn_authz_t for this request.
  */
 static svn_authz_t *
-get_access_conf(request_rec *r, authz_svn_config_rec *conf,
-                apr_pool_t *scratch_pool)
+get_access_conf(request_rec *r, authz_svn_config_rec *conf)
 {
   const char *cache_key = NULL;
   const char *access_file;
@@ -183,7 +181,7 @@ get_access_conf(request_rec *r, authz_svn_config_rec *conf,
         ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "%s", dav_err->desc);
         return NULL;
       }
-      access_file = svn_dirent_join_many(scratch_pool, repos_path, "conf",
+      access_file = svn_dirent_join_many(r->pool, repos_path, "conf",
                                          conf->repo_relative_access_file,
                                          NULL);
     }
@@ -195,7 +193,7 @@ get_access_conf(request_rec *r, authz_svn_config_rec *conf,
   ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r,
                 "Path to authz file is %s", access_file);
 
-  cache_key = apr_pstrcat(scratch_pool, "mod_authz_svn:",
+  cache_key = apr_pstrcat(r->pool, "mod_authz_svn:",
                           access_file, (char *)NULL);
   apr_pool_userdata_get(&user_data, cache_key, r->connection->pool);
   access_conf = user_data;
@@ -244,13 +242,12 @@ convert_case(char *text, svn_boolean_t to_uppercase)
 /* Return the username to authorize, with case-conversion performed if
    CONF->force_username_case is set. */
 static char *
-get_username_to_authorize(request_rec *r, authz_svn_config_rec *conf,
-                          apr_pool_t *pool)
+get_username_to_authorize(request_rec *r, authz_svn_config_rec *conf)
 {
   char *username_to_authorize = r->user;
   if (username_to_authorize && conf->force_username_case)
     {
-      username_to_authorize = apr_pstrdup(pool, r->user);
+      username_to_authorize = apr_pstrdup(r->pool, r->user);
       convert_case(username_to_authorize,
                    strcasecmp(conf->force_username_case, "upper") == 0);
     }
@@ -285,8 +282,7 @@ req_check_access(request_rec *r,
   svn_authz_t *access_conf = NULL;
   svn_error_t *svn_err;
   char errbuf[256];
-  const char *username_to_authorize = get_username_to_authorize(r, conf,
-                                                                r->pool);
+  const char *username_to_authorize = get_username_to_authorize(r, conf);
 
   switch (r->method_number)
     {
@@ -422,7 +418,7 @@ req_check_access(request_rec *r,
     }
 
   /* Retrieve/cache authorization file */
-  access_conf = get_access_conf(r,conf, r->pool);
+  access_conf = get_access_conf(r,conf);
   if (access_conf == NULL)
     return DECLINED;
 
@@ -580,13 +576,14 @@ log_access_verdict(LOG_ARGS_SIGNATURE,
 }
 
 /*
- * Implementation of subreq_bypass with scratch_pool parameter.
+ * This function is used as a provider to allow mod_dav_svn to bypass the
+ * generation of an apache request when checking GET access from
+ * "mod_dav_svn/authz.c" .
  */
 static int
-subreq_bypass2(request_rec *r,
-               const char *repos_path,
-               const char *repos_name,
-               apr_pool_t *scratch_pool)
+subreq_bypass(request_rec *r,
+              const char *repos_path,
+              const char *repos_name)
 {
   svn_error_t *svn_err = NULL;
   svn_authz_t *access_conf = NULL;
@@ -597,7 +594,7 @@ subreq_bypass2(request_rec *r,
 
   conf = ap_get_module_config(r->per_dir_config,
                               &authz_svn_module);
-  username_to_authorize = get_username_to_authorize(r, conf, scratch_pool);
+  username_to_authorize = get_username_to_authorize(r, conf);
 
   /* If configured properly, this should never be true, but just in case. */
   if (!conf->anonymous
@@ -608,7 +605,7 @@ subreq_bypass2(request_rec *r,
     }
 
   /* Retrieve authorization file */
-  access_conf = get_access_conf(r, conf, scratch_pool);
+  access_conf = get_access_conf(r, conf);
   if (access_conf == NULL)
     return HTTP_FORBIDDEN;
 
@@ -622,7 +619,7 @@ subreq_bypass2(request_rec *r,
                                              username_to_authorize,
                                              svn_authz_none|svn_authz_read,
                                              &authz_access_granted,
-                                             scratch_pool);
+                                             r->pool);
       if (svn_err)
         {
           ap_log_rerror(APLOG_MARK, APLOG_ERR,
@@ -649,26 +646,6 @@ subreq_bypass2(request_rec *r,
   log_access_verdict(APLOG_MARK, r, 1, repos_path, NULL);
 
   return OK;
-}
-
-/*
- * This function is used as a provider to allow mod_dav_svn to bypass the
- * generation of an apache request when checking GET access from
- * "mod_dav_svn/authz.c" .
- */
-static int
-subreq_bypass(request_rec *r,
-              const char *repos_path,
-              const char *repos_name)
-{
-  int status;
-  apr_pool_t *scratch_pool;
-
-  scratch_pool = svn_pool_create(r->pool);
-  status = subreq_bypass2(r, repos_path, repos_name, scratch_pool);
-  svn_pool_destroy(scratch_pool);
-
-  return status;
 }
 
 /*
