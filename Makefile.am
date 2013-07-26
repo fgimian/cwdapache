@@ -1,5 +1,5 @@
 ACLOCAL_AMFLAGS = -I m4
-EXTRA_DIST = LICENSE
+EXTRA_DIST = LICENSE version-gen
 SUBDIRS = src
 
 dist-hook:
