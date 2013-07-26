@@ -20,7 +20,7 @@ Modules for Apache httpd that allow Atlassian Crowd to be used for the authentic
 %setup -q
 
 %build
-aclocal
+libtoolize
 autoreconf --install
 %configure
 make %{?_smp_mflags}
