@@ -3,21 +3,21 @@ Version:        2.0.2
 Release:        1%{?dist}
 Summary:        Modules for integrating Apache httpd and Subversion with Atlassian Crowd
 
-License:	    Apache License, Version 2.0
-URL:            http://www.atlassian.com/software/crowd/
+License:        Apache License, Version 2.0
+URL:            https://confluence.atlassian.com/display/CROWD/Integrating+Crowd+with+Apache
 Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  autoconf automake curl-devel httpd-devel libtool libxml2-devel subversion-devel
 Requires:       curl httpd-devel libtool libxml2 mod_dav_svn
 
-Group:		Networking/WWW
+Group:          System Environment/Daemons
 
 %description
 Modules for Apache httpd that allow Atlassian Crowd to be used for the authentication and authorisation of HTTP and Subversion requests
 
 %prep
-%setup
+%setup -q
 
 %build
 aclocal
