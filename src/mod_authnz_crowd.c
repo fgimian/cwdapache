@@ -555,9 +555,8 @@ static int post_config(apr_pool_t *pconf, apr_pool_t *plog __attribute__((unused
             if ((crowd_config->crowd_app_name != NULL || crowd_config->crowd_app_password != NULL
                 || crowd_config->crowd_url != NULL)
                 && (crowd_config->crowd_ssl_verify_peer == true && crowd_config->crowd_cert_path == NULL)) {
-                ap_log_error(APLOG_MARK, APLOG_EMERG, 0, s,
+                ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, s,
                         "CrowdSSLVerifyPeer is On but CrowdCertPath is unspecified.");
-                exit(1);
             }
 
             /* Parse the timeout parameter, if specified */
