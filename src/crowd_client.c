@@ -1024,6 +1024,8 @@ static bool handle_crowd_groups_groups_element(write_data_t *write_data, const x
 apr_array_header_t *crowd_user_groups(const char *username, const request_rec *r, const crowd_config *config) {
     apr_array_header_t *user_groups;
 
+    ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Memberships requested for '%s'", username);
+
     /* Check cache */
     char *cache_key = NULL;
     if (groups_cache != NULL) {
@@ -1038,6 +1040,7 @@ apr_array_header_t *crowd_user_groups(const char *username, const request_rec *r
                 int i;
                 for (i = 0; i < cached_groups->count; i++) {
                     APR_ARRAY_PUSH(user_groups, const char *) = apr_pstrdup(r->pool, cached_groups->groups[i]);
+                    ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Cached group membership for '%s': %s", username, cached_groups->groups[i]);
                 }
                 return user_groups;
             }

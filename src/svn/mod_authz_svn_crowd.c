@@ -178,6 +178,8 @@ static const command_rec authz_svn_cmds[] =
 static svn_authz_t *
 get_access_conf(request_rec *r, authz_svn_config_rec *conf, const char *username)
 {
+  ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "mod_authz_svn_crowd.c:get_access_conf: %s", username);
+
   const char *cache_key = NULL;
   void *user_data = NULL;
   svn_authz_t *access_conf = NULL;
@@ -254,6 +256,7 @@ get_access_conf(request_rec *r, authz_svn_config_rec *conf, const char *username
   int i;
   for (i = 0; i < user_groups->nelts; i++) {
     const char *user_group = APR_ARRAY_IDX(user_groups, i, const char *);
+    ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "get_access_conf: username=%s, user_group=%s", username, user_group);
     cfg_option_t *option = log_ralloc(r, apr_pcalloc(r->pool, sizeof(cfg_option_t)));
     if (option == NULL) {
         return NULL;
@@ -344,6 +347,8 @@ req_check_access(request_rec *r,
                  const char **repos_path_ref,
                  const char **dest_repos_path_ref)
 {
+  ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "mod_authz_svn_crowd.c:req_check_access");
+
   const char *dest_uri;
   apr_uri_t parsed_dest_uri;
   const char *cleaned_uri;
@@ -398,6 +403,8 @@ req_check_access(request_rec *r,
         break;
     }
 
+  ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "mod_authz_svn_crowd.c:req_check_access authz_svn_type=%x", authz_svn_type);
+
   dav_err = dav_svn_split_uri(r,
                               r->uri,
                               conf->base_path,
@@ -443,6 +450,7 @@ req_check_access(request_rec *r,
 
       ap_unescape_url(parsed_dest_uri.path);
       dest_uri = parsed_dest_uri.path;
+      ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "mod_authz_svn_crowd.c:req_check_access dest_uri=%s, conf->base_path=%s", dest_uri, conf->base_path);
       if (strncmp(dest_uri, conf->base_path, strlen(conf->base_path)))
         {
           /* If it is not the same location, then we don't allow it.
@@ -531,6 +539,8 @@ req_check_access(request_rec *r,
 
           return DECLINED;
         }
+        ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "mod_authz_svn_crowd.c:req_check_access authz_access_granted=%d", authz_access_granted);
+
         if (!authz_access_granted)
           return DECLINED;
     }
@@ -631,6 +641,8 @@ log_access_verdict(const char *file, int line,
 static int
 access_checker(request_rec *r)
 {
+  ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "mod_authz_svn_crowd.c:access_checker");
+
   authz_svn_config_rec *conf = ap_get_module_config(r->per_dir_config,
                                                     &authz_svn_crowd_module);
   const char *repos_path;
@@ -688,6 +700,8 @@ access_checker(request_rec *r)
 static int
 check_user_id(request_rec *r)
 {
+  ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "mod_authz_svn_crowd.c:check_user_id");
+
   authz_svn_config_rec *conf = ap_get_module_config(r->per_dir_config,
                                                     &authz_svn_crowd_module);
   const char *repos_path;

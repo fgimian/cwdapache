@@ -405,6 +405,7 @@ static void crowd_set_groups_env_variable(request_rec *r) {
 }
 
 static int check_user_id(request_rec *r) {
+    ap_log_rerror(APLOG_MARK, APLOG_INFO, 0, r, "check_user_id");
     authnz_crowd_dir_config *config = get_config(r);
     if (config == NULL || !(config->accept_sso)) {
         return DECLINED;
@@ -439,6 +440,7 @@ static bool xlate_string(apr_xlate_t *xlate, const char *input, char *output) {
 /* Given a username and password, expected to return AUTH_GRANTED if we can validate this user/password combination. */
 static authn_status authn_crowd_check_password(request_rec *r, const char *user, const char *password)
 {
+    ap_log_rerror(APLOG_MARK, APLOG_INFO, 0, r, "authn_crowd_check_password");
     authnz_crowd_dir_config *config = get_config(r);
     if (config == NULL) {
         return AUTH_GENERAL_ERROR;
@@ -579,6 +581,7 @@ static int post_config(apr_pool_t *pconf, apr_pool_t *plog __attribute__((unused
 }
 
 apr_array_header_t *authnz_crowd_user_groups(const char *username, request_rec *r) {
+    ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "authnz_crowd_user_groups");
     authnz_crowd_dir_config *config = get_config(r);
     if (config == NULL) {
         return NULL;
@@ -597,6 +600,7 @@ apr_array_header_t *authnz_crowd_user_groups(const char *username, request_rec *
  * @return OK, DECLINED, or HTTP_...
  */
 static int auth_checker(request_rec *r) {
+    ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "mod_authnz_crowd:auth_checker");
 
     authnz_crowd_dir_config *config = get_config(r);
     if (config == NULL) {
@@ -641,6 +645,8 @@ static int auth_checker(request_rec *r) {
                 int y;
                 for (y = 0; y < user_groups->nelts; y++) {
                     const char *user_group = APR_ARRAY_IDX(user_groups, y, const char *);
+                    ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r,
+                        "auth_checker: user_group=%s, required_group=%s", user_group, required_group);
                     if (strcasecmp(user_group, required_group) == 0) {
                         ap_log_rerror(APLOG_MARK, APLOG_INFO, 0, r,
                             "Granted authorisation to '%s' on the basis of membership of '%s'.", r->user, user_group);
