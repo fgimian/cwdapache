@@ -296,6 +296,41 @@ get_username_to_authorize(request_rec *r, authz_svn_config_rec *conf)
   return username_to_authorize;
 }
 
+/* Log the contents of an svn_authz_t at APLOG_DEBUG. This will show the per-repo
+ * ACLs as specified in the access file along with the 'groups' section populated
+ * according to the current user's memberships.
+ */
+static void
+log_access_conf(const request_rec *r,
+                const char *context,
+                const svn_authz_t *access_conf)
+{
+  ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "log_access_conf: %s (%pp)", context, access_conf->cfg);
+  ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "x_values=%d", access_conf->cfg->x_values);
+
+  ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Sections in config: %d", apr_hash_count(access_conf->cfg->sections));
+
+  apr_hash_index_t *hi;
+  for (hi = apr_hash_first(r->pool, access_conf->cfg->sections); hi; hi = apr_hash_next(hi)) {
+    const cfg_section_t *value;
+
+    apr_hash_this(hi, NULL, NULL, (void **)&value);
+    ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Section name: %s", value->name);
+
+    apr_hash_index_t *hj;
+    for (hj = apr_hash_first(r->pool, value->options); hj; hj = apr_hash_next(hj)) {
+      const char *optionsKey;
+      const cfg_option_t *optionsValue;
+      apr_hash_this(hj, NULL, NULL, (void **)&optionsValue);
+      ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Option name: %s", optionsValue->name);
+      ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Option value: %s", optionsValue->value);
+      if (optionsValue->expanded) {
+        ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Option expanded value: %s", optionsValue->x_value);
+      }
+    }
+  }
+}
+
 /* Check if the current request R is allowed.  Upon exit *REPOS_PATH_REF
  * will contain the path and repository name that an operation was requested
  * on in the form 'name:path'.  *DEST_REPOS_PATH_REF will contain the
@@ -471,6 +506,7 @@ req_check_access(request_rec *r,
   if (repos_path
       || (!repos_path && (authz_svn_type & svn_authz_write)))
     {
+      log_access_conf(r, "req_check_access: authz_svn_type", access_conf);
       svn_err = svn_repos_authz_check_access(access_conf, repos_name,
                                              repos_path,
                                              username_to_authorize,
@@ -516,6 +552,7 @@ req_check_access(request_rec *r,
      repos_path == NULL (see above for explanations) */
   if (repos_path)
     {
+      log_access_conf(r, "req_check_access: svn_authz_write | svn_authz_recursive", access_conf);
       svn_err = svn_repos_authz_check_access(access_conf,
                                              dest_repos_name,
                                              dest_repos_path,
