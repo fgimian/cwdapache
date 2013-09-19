@@ -658,7 +658,7 @@ static int auth_checker(request_rec *r) {
         }
 
     }
- 
+
     ap_log_rerror(APLOG_MARK, APLOG_NOTICE, 0, r, "Denied authorisation to '%s'.", r->user);
     return config->authoritative ? HTTP_UNAUTHORIZED : DECLINED;
 }
@@ -676,7 +676,6 @@ static void register_hooks(apr_pool_t *p)
         &authn_crowd_provider
     );
     ap_hook_auth_checker(auth_checker, pre_auth_checker, NULL, APR_HOOK_MIDDLE);
-    ap_log_perror(APLOG_MARK, APLOG_NOTICE, 0, p, PACKAGE_STRING " installed.");
 }
 
 module AP_MODULE_DECLARE_DATA authnz_crowd_module =
