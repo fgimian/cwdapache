@@ -164,12 +164,12 @@ create_authz_svn_dir_config(apr_pool_t *p, char *d)
 }
 
 static const char *
-AuthzSVNAccessFile_cmd(cmd_parms *cmd, void *config, const char *arg1)
+AuthzSVNCrowdAccessFile_cmd(cmd_parms *cmd, void *config, const char *arg1)
 {
   authz_svn_config_rec *conf = config;
 
   if (conf->repo_relative_access_file != NULL)
-    return "AuthzSVNAccessFile and AuthzSVNReposRelativeAccessFile "
+    return "AuthzSVNCrowdAccessFile and AuthzSVNCrowdReposRelativeAccessFile "
            "directives are mutually exclusive.";
 
   conf->access_file = ap_server_root_relative(cmd->pool, arg1);
@@ -179,14 +179,14 @@ AuthzSVNAccessFile_cmd(cmd_parms *cmd, void *config, const char *arg1)
 
 
 static const char *
-AuthzSVNReposRelativeAccessFile_cmd(cmd_parms *cmd,
+AuthzSVNCrowdReposRelativeAccessFile_cmd(cmd_parms *cmd,
                                     void *config,
                                     const char *arg1)
 {
   authz_svn_config_rec *conf = config;
 
   if (conf->access_file != NULL)
-    return "AuthzSVNAccessFile and AuthzSVNReposRelativeAccessFile "
+    return "AuthzSVNCrowdAccessFile and AuthzSVNCrowdReposRelativeAccessFile "
            "directives are mutually exclusive.";
 
   conf->repo_relative_access_file = arg1;
@@ -202,13 +202,13 @@ static const command_rec authz_svn_cmds[] =
                OR_AUTHCFG,
                "Set to 'Off' to allow access control to be passed along to "
                "lower modules. (default is On.)"),
-  AP_INIT_TAKE1("AuthzSVNCrowdAccessFile", AuthzSVNAccessFile_cmd,
+  AP_INIT_TAKE1("AuthzSVNCrowdAccessFile", AuthzSVNCrowdAccessFile_cmd,
                 NULL,
                 OR_AUTHCFG,
                 "Path to text file containing permissions of repository "
                 "paths."),
-  AP_INIT_TAKE1("AuthzSVNReposRelativeAccessFile",
-                AuthzSVNReposRelativeAccessFile_cmd,
+  AP_INIT_TAKE1("AuthzSVNCrowdReposRelativeAccessFile",
+                AuthzSVNCrowdReposRelativeAccessFile_cmd,
                 NULL,
                 OR_AUTHCFG,
                 "Path (relative to repository 'conf' directory) to text "
