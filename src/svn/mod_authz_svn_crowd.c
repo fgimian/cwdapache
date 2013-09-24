@@ -55,6 +55,9 @@ const char *
 svn_fspath__canonicalize(const char *fspath,
                          apr_pool_t *pool);
 
+const char *
+svn_urlpath__canonicalize(const char *uri, apr_pool_t *pool);
+
 #include "../mod_authnz_crowd.h"
 
 extern module AP_MODULE_DECLARE_DATA authz_svn_crowd_module;
