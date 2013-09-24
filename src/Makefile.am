@@ -5,7 +5,7 @@ mod_authnz_crowd_la_SOURCES = mod_authnz_crowd.c mod_authnz_crowd.h crowd_client
 mod_authnz_crowd_la_LDFLAGS = -module -lcurl `xml2-config --libs`
 AM_CFLAGS = `apr-1-config --cflags`
 AM_CPPFLAGS = -I@APACHE_INCLUDE_DIR@ `apr-1-config --cppflags --includes` `xml2-config --cflags`
-CFLAGS=-g -O1   # -O2 causes mysterious crashes
+CFLAGS=-g -Wmissing-prototypes -O1   # -O2 causes mysterious crashes
 TESTS = test.py
 TESTS_ENVIRONMENT = APACHE_BIN_DIR=@APACHE_BIN_DIR@
 
