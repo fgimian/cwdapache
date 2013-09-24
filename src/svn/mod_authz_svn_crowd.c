@@ -48,9 +48,12 @@
 
 #include "../util.h"
 
-#include "svn_pools.h"
-#include "svn_dirent_uri.h"
-#include "private/svn_fspath.h"
+#include <svn_pools.h>
+#include <svn_dirent_uri.h>
+
+const char *
+svn_fspath__canonicalize(const char *fspath,
+                         apr_pool_t *pool);
 
 #include "../mod_authnz_crowd.h"
 
@@ -765,7 +768,7 @@ subreq_bypass2(request_rec *r,
   const char *username_to_authorize;
 
   conf = ap_get_module_config(r->per_dir_config,
-                              &authz_svn_module);
+                              &authz_svn_crowd_module);
   username_to_authorize = get_username_to_authorize(r, conf, scratch_pool);
 
   /* If configured properly, this should never be true, but just in case. */
@@ -777,7 +780,7 @@ subreq_bypass2(request_rec *r,
     }
 
   /* Retrieve authorization file */
-  access_conf = get_access_conf(r, conf, scratch_pool);
+  access_conf = get_access_conf(r, conf, scratch_pool, username_to_authorize);
   if (access_conf == NULL)
     return HTTP_FORBIDDEN;
 
