@@ -522,7 +522,10 @@ static int crowd_request(const request_rec *r, const crowd_config *config, bool 
             || curl_easy_setopt(curl_easy, CURLOPT_HTTPHEADER, headers)
             || curl_easy_setopt(curl_easy, CURLOPT_TIMEOUT, config->crowd_timeout)
             || curl_easy_setopt(curl_easy, CURLOPT_SSL_VERIFYPEER, config->crowd_ssl_verify_peer ? 1 : 0)
-            || curl_easy_setopt(curl_easy, CURLOPT_CAINFO, config->crowd_cert_path)
+            /* not sure if the null pointer noop is needed */
+            /* yes, it's supposed to be dir -> CURLOPT_CAPATH and path -> CURLOPT_CAINFO */
+            || ((config->crowd_cert_path == NULL) ? 0 : curl_easy_setopt(curl_easy, CURLOPT_CAINFO, config->crowd_cert_path))
+            || ((config->crowd_cert_dir  == NULL) ? 0 : curl_easy_setopt(curl_easy, CURLOPT_CAPATH, config->crowd_cert_dir))
             || (post && (curl_easy_setopt(curl_easy, CURLOPT_POST, 1)
             || curl_easy_setopt(curl_easy, CURLOPT_READFUNCTION, read_crowd_authentication_request)
             || curl_easy_setopt(curl_easy, CURLOPT_READDATA, &read_data)

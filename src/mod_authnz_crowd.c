@@ -82,6 +82,8 @@ static void *create_dir_config(apr_pool_t *p, char *dir)
     if (dir_config->crowd_config == NULL) {
         exit(1);
     }
+    dir_config->crowd_config->crowd_cert_dir = NULL;
+    dir_config->crowd_config->crowd_cert_path = NULL;
     dir_config->crowd_config->crowd_ssl_verify_peer = true;
     dir_config->basic_auth_xlates = log_palloc(p, apr_array_make(p, 0, sizeof(apr_xlate_t *)));
     if (dir_config->basic_auth_xlates == NULL) {
@@ -178,13 +180,24 @@ static const char *set_crowd_timeout(cmd_parms *parms, void *mconfig, const char
 
 static const char *set_crowd_cert_path(cmd_parms *parms, void *mconfig, const char *w)
 {
-    // Ignore empty URLs.  Will be reported as a missing parameter.
+    // Ignore empty filenames.  Will be reported as a missing parameter.
     if (*w == '\0') {
         return NULL;
     }
 
     authnz_crowd_dir_config *config = (authnz_crowd_dir_config *) mconfig;
     return set_once(parms, &(config->crowd_config->crowd_cert_path), w);
+}
+
+static const char *set_crowd_cert_dir(cmd_parms *parms, void *mconfig, const char *w)
+{
+    // Ignore empty filenames.  Will be reported as a missing parameter.
+    if (*w == '\0') {
+        return NULL;
+    }
+
+    authnz_crowd_dir_config *config = (authnz_crowd_dir_config *) mconfig;
+    return set_once(parms, &(config->crowd_config->crowd_cert_dir), w);
 }
 
 static const char *set_crowd_url(cmd_parms *parms, void *mconfig, const char *w)
@@ -262,6 +275,7 @@ static const command_rec commands[] =
         "The maximum length of time, in seconds, to wait for a response from Crowd (default or 0 = no timeout)"),
     AP_INIT_TAKE1("CrowdURL", set_crowd_url, NULL, OR_AUTHCFG, "The base URL of the Crowd server"),
     AP_INIT_TAKE1("CrowdCertPath", set_crowd_cert_path, NULL, OR_AUTHCFG, "The path to the SSL certificate file to supply to curl for Crowd over SSL"),
+    AP_INIT_TAKE1("CrowdCertDirectory", set_crowd_cert_dir, NULL, OR_AUTHCFG, "The path to the SSL certificate directory to supply to curl for Crowd over SSL (must be prep'd with OpenSSL's c_rehash utility)"),
     AP_INIT_TAKE1("CrowdCacheMaxAge", set_crowd_cache_max_age, NULL, RSRC_CONF,
         "The maximum length of time that successful results from Crowd can be cached, in seconds"
         " (default = 60 seconds)"),
@@ -554,12 +568,15 @@ static int post_config(apr_pool_t *pconf, apr_pool_t *plog __attribute__((unused
                 exit(1);
             }
 
-            if ((crowd_config->crowd_app_name != NULL || crowd_config->crowd_app_password != NULL
-                || crowd_config->crowd_url != NULL)
-                && (crowd_config->crowd_ssl_verify_peer == true && crowd_config->crowd_cert_path == NULL)) {
-                ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, s,
-                        "CrowdSSLVerifyPeer is On but CrowdCertPath is unspecified.");
-            }
+/* This is counterproductive - curl includes sane defaults for finding CAs installed on the system
+ * and adding a private CA to the system certstore usually isn't difficult.
+ *           if ((crowd_config->crowd_app_name != NULL || crowd_config->crowd_app_password != NULL
+ *               || crowd_config->crowd_url != NULL)
+ *               && (crowd_config->crowd_ssl_verify_peer == true && crowd_config->crowd_cert_path == NULL)) {
+ *               ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, s,
+ *                       "CrowdSSLVerifyPeer is On but CrowdCertPath is unspecified.");
+ *           }
+ */
 
             /* Parse the timeout parameter, if specified */
             crowd_config->crowd_timeout
