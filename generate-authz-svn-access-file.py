@@ -14,7 +14,7 @@ from sys import stderr, argv, exit
 import re
 
 # Crowd deployment base URL
-base = 'http://jwalton-desktop:4990/crowd'
+base = 'http://localhost:8095/crowd'
 um = base + '/rest/usermanagement/1'
 
 # Parse command-line arguments
