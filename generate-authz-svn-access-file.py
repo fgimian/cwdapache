@@ -5,9 +5,15 @@
 # Provide an existing access file and the groups section will be expanded
 #  with the memberships defined in Crowd.
 
+from __future__ import print_function
+
 import json
 from httplib2 import Http
-from urllib.parse import quote
+
+try:
+  from urllib.parse import quote
+except ImportError:
+  from urllib import quote
 
 from sys import stderr, argv, exit
 
