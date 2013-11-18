@@ -47,7 +47,11 @@ def membersOf(groupName):
 
 print('# Membership from %s' % base)
 
-groupLine = re.compile('^\s*([^#][^=\s]+)\s*=\s*$')
+# Matches lines of the form:
+# groupName =
+# with a non-empty group name, no comment at the start,
+# and no set of groups already specified
+groupLine = re.compile('^\s*([^#][^=\s]*)\s*=\s*$')
 
 shownGroups = False
 
