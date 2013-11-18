@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 # Generate a mod_authz_svn AuthzSVNAccessFile with memberships from a Crowd server
 
