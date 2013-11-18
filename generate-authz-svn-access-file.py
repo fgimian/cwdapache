@@ -47,7 +47,7 @@ def membersOf(groupName):
 
 print('# Membership from %s' % base)
 
-groupLine = re.compile('\s*([^#][^=\s]+)\s*=\s*')
+groupLine = re.compile('^\s*([^#][^=\s]+)\s*=\s*$')
 
 shownGroups = False
 
