@@ -72,8 +72,6 @@ if len(argv) == 2:
       elif l.startswith('['):
         inGroups = False
 
-        print('here', l)
-
 # If there was no groups section, create one with all memberships
 if not shownGroups:
   print()
