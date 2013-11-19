@@ -835,11 +835,19 @@ typedef struct {
 static const char *make_validate_session_url(const request_rec *r, const crowd_config *config, CURL *curl_easy,
     const void *extra) {
     const crowd_validate_session_data *data = extra;
-    const char *url_template = log_ralloc(r, apr_psprintf(r->pool, "%%srest/usermanagement/1/session/%s", data->token));
-    if (url_template == NULL) {
+
+    const char *urlWithoutToken = make_url(r, config, curl_easy, NULL, "%srest/usermanagement/1/session/");
+
+    const char* escapedToken = curl_easy_escape(curl_easy, data->token, 0);
+    if (escapedToken == NULL) {
         return NULL;
     }
-    return make_url(r, config, curl_easy, NULL, url_template);
+
+    char *url = log_ralloc(r, apr_pstrcat(r->pool, urlWithoutToken, escapedToken, NULL));
+
+    curl_free(escapedToken);
+
+    return url;
 }
 
 static bool handle_crowd_validate_session_user_element(write_data_t *write_data, const xmlChar* text) {
