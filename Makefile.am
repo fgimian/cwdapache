@@ -1,5 +1,5 @@
 ACLOCAL_AMFLAGS = -I m4
-EXTRA_DIST = LICENSE version-gen
+EXTRA_DIST = LICENSE version-gen generate-authz-svn-access-file.py
 SUBDIRS = src
 
 dist-hook:
