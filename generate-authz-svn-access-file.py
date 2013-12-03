@@ -59,7 +59,7 @@ shownGroups = False
 if len(argv) == 2:
   with open(argv[1]) as cfg:
     inGroups = False
-    for l in [l.rstrip('\r\n') for l in cfg]:
+    for l in [l.rstrip(' \r\n') for l in cfg]:
       if inGroups:
         m = groupLine.match(l)
         if m:
