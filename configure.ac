@@ -40,7 +40,9 @@ AC_CHECK_FILE([/usr/libexec/apache2/mod_dav.so], [APACHE_MODULES_DIR="/usr/libex
     AC_CHECK_FILE([/usr/lib64/httpd/modules/mod_dav.so], [APACHE_MODULES_DIR="/usr/lib64/httpd/modules"], [
         AC_CHECK_FILE([/usr/lib/httpd/modules/mod_dav.so], [APACHE_MODULES_DIR="/usr/lib/httpd/modules"], [
             AC_CHECK_FILE([/usr/lib/apache2/modules/mod_dav.so], [APACHE_MODULES_DIR="/usr/lib/apache2/modules"], [
-                AC_MSG_ERROR([Could not locate Apache modules directory])
+                AC_CHECK_FILE([/usr/lib64/apache2/mod_dav.so], [APACHE_MODULES_DIR="/usr/lib64/apache2"], [
+                    AC_MSG_ERROR([Could not locate Apache modules directory])
+                ])
             ])
         ])
     ])
@@ -61,7 +63,9 @@ AC_SUBST([HTTPD_CONF])
 AC_CHECK_FILE([/usr/local/apache2/bin/apxs], [APXS="/usr/local/apache2/bin/apxs"], [
     AC_CHECK_FILE([/usr/sbin/apxs], [APXS="/usr/sbin/apxs"], [
         AC_CHECK_FILE([/usr/bin/apxs2], [APXS="/usr/bin/apxs2"], [
-            AC_MSG_ERROR([Could not locate Apache apxs binary])
+            AC_CHECK_FILE([/usr/sbin/apxs2], [APXS="/usr/sbin/apxs2"], [
+                AC_MSG_ERROR([Could not locate Apache apxs binary])
+            ])
         ])
     ])
 ])
