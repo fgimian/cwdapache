@@ -568,16 +568,6 @@ static int post_config(apr_pool_t *pconf, apr_pool_t *plog __attribute__((unused
                 exit(1);
             }
 
-/* This is counterproductive - curl includes sane defaults for finding CAs installed on the system
- * and adding a private CA to the system certstore usually isn't difficult.
- *           if ((crowd_config->crowd_app_name != NULL || crowd_config->crowd_app_password != NULL
- *               || crowd_config->crowd_url != NULL)
- *               && (crowd_config->crowd_ssl_verify_peer == true && crowd_config->crowd_cert_path == NULL)) {
- *               ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, s,
- *                       "CrowdSSLVerifyPeer is On but CrowdCertPath is unspecified.");
- *           }
- */
-
             /* Parse the timeout parameter, if specified */
             crowd_config->crowd_timeout
                 = parse_number((*dir_config)->crowd_timeout_string, "CrowdTimeout", 0, UINT_MAX, 0, s);
