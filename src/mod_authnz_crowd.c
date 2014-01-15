@@ -59,7 +59,7 @@ typedef struct
 
 module AP_MODULE_DECLARE_DATA authnz_crowd_module;
 
-static apr_array_header_t *dir_configs = NULL;
+static const char *dir_configs_key = "authnz_crowd_dir_configs_key";
 
 /** Function to allow all modules to create per directory configuration
  *  structures.
@@ -91,11 +91,14 @@ static void *create_dir_config(apr_pool_t *p, char *dir)
     }
 
     // Add new config to list of this module's per-directory configs, for checking during the post-config phase.
+    apr_array_header_t *dir_configs = NULL;
+    apr_pool_userdata_get((void**)&dir_configs, dir_configs_key, p);
     if (dir_configs == NULL)  {
         dir_configs = log_palloc(p, apr_array_make(p, 0, sizeof(authnz_crowd_dir_config *)));
         if (dir_configs == NULL) {
             exit(1);
         }
+        apr_pool_userdata_set(dir_configs, dir_configs_key, apr_pool_cleanup_null, p);
     }
     APR_ARRAY_PUSH(dir_configs, authnz_crowd_dir_config *) = dir_config;
 
@@ -550,6 +553,8 @@ static int post_config(apr_pool_t *pconf, apr_pool_t *plog __attribute__((unused
         }
     }
 
+    apr_array_header_t *dir_configs = NULL;
+    apr_pool_userdata_get((void**)&dir_configs, dir_configs_key, pconf);
     if (dir_configs != NULL) {
 
         /* Iterate over each directory config */
