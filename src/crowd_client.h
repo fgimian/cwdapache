@@ -14,6 +14,7 @@ typedef struct {
     const char *crowd_app_password;     /* Application password used to authenticate with Crowd */
     const char *crowd_url;              /* Base URL of the Crowd server */
     const char *crowd_cert_path;        /* Path to file containing crowd certificate authority for curl */
+    const char *crowd_cert_dir;         /* Path to directory containing crowd certificate authority for curl (directory must be prep'd with OpenSSL's c_rehash utility) */
     bool crowd_ssl_verify_peer;         /* Flag to control whether or not SSL certificates are validated */
     long crowd_timeout;                 /* Crowd response timeout, in seconds, or 0 for no timeout */
     const char *groups_env_name;        /* Name of the environment variable in which to store a space-delimited list of groups that the remote user belongs to */
