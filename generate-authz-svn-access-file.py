@@ -1,9 +1,18 @@
 #!/usr/bin/python
 
-# Generate a mod_authz_svn AuthzSVNAccessFile with memberships from a Crowd server
+# Generate a mod_authz_svn AuthzSVNAccessFile with memberships from a Crowd
+#  server
 
 # Provide an existing access file and the groups section will be expanded
 #  with the memberships defined in Crowd.
+
+# To update, schedule this:
+
+# if generate-authz-svn-access-file.py --config crowd.properties --check-event-token access-file-expanded.authz; then
+#    : # Do nothing; file is current
+# else
+#   generate-authz-svn-access-file.py --config crowd.properties access-file-template.authz >access-file-expanded.authz.tmp && mv access-file-expanded.authz.tmp access-file-expanded.authz
+# fi
 
 from __future__ import print_function
 
@@ -15,37 +24,123 @@ try:
 except ImportError:
   from urllib import quote
 
+from optparse import OptionParser
+
 from sys import stderr, argv, exit
 
 import re
 
-# Crowd deployment base URL
-base = 'http://localhost:8095/crowd'
-um = base + '/rest/usermanagement/1'
+# Ad-hoc parsing of Java-like .properties files
+def parseConfigFile(filename):
+  cfgLine = re.compile('^([a-zA-Z._]+)\s*=\s*(.*)$')
+
+  cfg = {}
+
+  with open(filename) as f:
+   for l in f:
+     m = cfgLine.match(l)
+     if m:
+       cfg[m.group(1)] = m.group(2).replace('\:', ':')
+
+  return cfg
+
+def connectionProperties(cfg):
+  if 'crowd.base.url' in cfg:
+    baseUrl = cfg['crowd.base.url']
+  else:
+    baseUrl = re.sub('/services/?$', '', cfg['crowd.server.url'])
+  name = cfg['application.name']
+  password = cfg['application.password']
+
+  return (baseUrl, name, password)
+
 
 # Parse command-line arguments
-if len(argv) > 2:
-  print('Usage: %s [access-file]' % argv[0])
+parser = OptionParser(usage = 'usage: %prog [options] [access-file]')
+parser.add_option("--config", dest="config",
+    help = 'A crowd.properties file, with crowd.base.url, application.name and application.password.'
+)
+parser.add_option("--check-event-token", dest="check_event_token_filename",
+    metavar='FILE',
+    help = 'A processed file to check for freshness. An exit code of 0 indicates success.'
+)
+
+(options, args) = parser.parse_args()
+
+if len(args) > 1:
+  parser.print_help(file = stderr)
   exit(5)
+
+if len(args) == 1:
+  accessFile = args[0]
+else:
+  accessFile = None
+
+(base, appName, appPass) = connectionProperties(parseConfigFile(options.config or 'crowd.properties'))
+
+# Crowd deployment base URL
+um = base + '/rest/usermanagement/1'
 
 http = Http(cache = '.cache')
 
 # Crowd application credentials
-http.add_credentials('app', 'app')
+http.add_credentials(appName, appPass)
 
-CC_NOT_REAL_TIME = {'Cache-Control': 'max-age=300', 'Accept': 'application/json'}
+CC_FRESH = {'Cache-Control': 'max-age=0', 'Accept': 'application/json'}
 
 def get(url):
-  resp, content = http.request(url, headers = CC_NOT_REAL_TIME)
+  resp, content = http.request(url, headers = CC_FRESH)
   if resp.status != 200:
     print('Failed to fetch %s: %s' % (url, resp), file = stderr)
     exit(10)
   return json.loads(content.decode('utf-8'))
  
+def getEventToken():
+  url = um + '/event'
+  resp, content = http.request(url, headers = CC_FRESH)
+  if resp.status == 404:
+    return None
+  if resp.status != 200:
+    print('Failed to fetch %s: %s' % (url, resp), file = stderr)
+    exit(10)
+  event = json.loads(content.decode('utf-8'))
+  if 'incrementalSynchronisationAvailable' in event and event['incrementalSynchronisationAvailable'] and 'newEventToken' in event:
+    return event['newEventToken']
+  else:
+    return None
+
+newEventToken = getEventToken()
+
+# Detect an unchanged userbase. Use a non-zero exit
+#  code to indicate that things have changed.
+if options.check_event_token_filename is not None:
+  if newEventToken is None:
+    # We can't get the current token; have to assume things have changed
+    exit(5)
+
+  tokenLine = re.compile('^#\s*eventToken:\s*(.*)$')
+
+  oldEventToken = None
+
+  with open(options.check_event_token_filename) as f:
+   for l in f:
+     m = tokenLine.match(l)
+     if m:
+       oldEventToken = m.group(1)
+       break
+
+  if oldEventToken == newEventToken:
+    exit(0)
+  else:
+    exit(1)
+
+
 def membersOf(groupName):
   return [user['name'] for user in get(um + '/group/user/nested?groupname=' + quote(groupName))['users']]
 
 print('# Membership from %s' % base)
+print('# eventToken: %s' % newEventToken)
+print()
 
 # Matches lines of the form:
 # groupName =
@@ -56,8 +151,8 @@ groupLine = re.compile('^\s*([^#][^=\s]*)\s*=\s*$')
 shownGroups = False
 
 # If a file was specified, process it and expand the groups section
-if len(argv) == 2:
-  with open(argv[1]) as cfg:
+if accessFile is not None:
+  with open(accessFile) as cfg:
     inGroups = False
     for l in [l.rstrip(' \r\n') for l in cfg]:
       if inGroups:
