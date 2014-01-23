@@ -111,6 +111,8 @@ if options.check_event_token_filename is not None:
 
   tokenLine = re.compile('^#\s*eventToken:\s*(.*)$')
 
+  oldEventToken = None
+
   with open(options.check_event_token_filename) as f:
    for l in f:
      m = tokenLine.match(l)
@@ -118,7 +120,7 @@ if options.check_event_token_filename is not None:
        oldEventToken = m.group(1)
        break
 
-  if oldEventToken and oldEventToken == newEventToken:
+  if oldEventToken == newEventToken:
     exit(0)
   else:
     exit(1)
