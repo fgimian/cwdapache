@@ -15,6 +15,8 @@ try:
 except ImportError:
   from urllib import quote
 
+from optparse import OptionParser
+
 from sys import stderr, argv, exit
 
 import re
@@ -24,9 +26,18 @@ base = 'http://localhost:8095/crowd'
 um = base + '/rest/usermanagement/1'
 
 # Parse command-line arguments
-if len(argv) > 2:
-  print('Usage: %s [access-file]' % argv[0])
+parser = OptionParser(usage = 'usage: %prog [access-file]')
+
+(options, args) = parser.parse_args()
+
+if len(args) > 1:
+  parser.print_help(file = stderr)
   exit(5)
+
+if len(args) == 1:
+  accessFile = args[0]
+else:
+  accessFile = None
 
 http = Http(cache = '.cache')
 
@@ -56,8 +67,8 @@ groupLine = re.compile('^\s*([^#][^=\s]*)\s*=\s*$')
 shownGroups = False
 
 # If a file was specified, process it and expand the groups section
-if len(argv) == 2:
-  with open(argv[1]) as cfg:
+if accessFile is not None:
+  with open(accessFile) as cfg:
     inGroups = False
     for l in [l.rstrip(' \r\n') for l in cfg]:
       if inGroups:
