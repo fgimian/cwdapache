@@ -1,9 +1,18 @@
 #!/usr/bin/python
 
-# Generate a mod_authz_svn AuthzSVNAccessFile with memberships from a Crowd server
+# Generate a mod_authz_svn AuthzSVNAccessFile with memberships from a Crowd
+#  server
 
 # Provide an existing access file and the groups section will be expanded
 #  with the memberships defined in Crowd.
+
+# To update, schedule this:
+
+# if generate-authz-svn-access-file.py --config crowd.properties --check-event-token access-file-expanded.authz; then
+#    : # Do nothing; file is current
+# else
+#   generate-authz-svn-access-file.py --config crowd.properties access-file-template.authz >access-file-expanded.authz.tmp && mv access-file-expanded.authz.tmp access-file-expanded.authz
+# fi
 
 from __future__ import print_function
 
