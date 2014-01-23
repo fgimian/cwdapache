@@ -26,7 +26,11 @@ base = 'http://localhost:8095/crowd'
 um = base + '/rest/usermanagement/1'
 
 # Parse command-line arguments
-parser = OptionParser(usage = 'usage: %prog [access-file]')
+parser = OptionParser(usage = 'usage: %prog [options] [access-file]')
+parser.add_option("--check-event-token", dest="check_event_token_filename",
+    metavar='FILE',
+    help = 'A processed file to check for freshness. An exit code of 0 indicates success.'
+)
 
 (options, args) = parser.parse_args()
 
@@ -68,6 +72,27 @@ def getEventToken():
     return None
 
 newEventToken = getEventToken()
+
+# Detect an unchanged userbase. Use a non-zero exit
+#  code to indicate that things have changed.
+if options.check_event_token_filename is not None:
+  if newEventToken is None:
+    # We can't get the current token; have to assume things have changed
+    exit(5)
+
+  tokenLine = re.compile('^#\s*eventToken:\s*(.*)$')
+
+  with open(options.check_event_token_filename) as f:
+   for l in f:
+     m = tokenLine.match(l)
+     if m:
+       oldEventToken = m.group(1)
+       break
+
+  if oldEventToken and oldEventToken == newEventToken:
+    exit(0)
+  else:
+    exit(1)
 
 
 def membersOf(groupName):
