@@ -44,19 +44,38 @@ http = Http(cache = '.cache')
 # Crowd application credentials
 http.add_credentials('app', 'app')
 
-CC_NOT_REAL_TIME = {'Cache-Control': 'max-age=300', 'Accept': 'application/json'}
+CC_FRESH = {'Cache-Control': 'max-age=0', 'Accept': 'application/json'}
 
 def get(url):
-  resp, content = http.request(url, headers = CC_NOT_REAL_TIME)
+  resp, content = http.request(url, headers = CC_FRESH)
   if resp.status != 200:
     print('Failed to fetch %s: %s' % (url, resp), file = stderr)
     exit(10)
   return json.loads(content.decode('utf-8'))
  
+def getEventToken():
+  url = um + '/event'
+  resp, content = http.request(url, headers = CC_FRESH)
+  if resp.status == 404:
+    return None
+  if resp.status != 200:
+    print('Failed to fetch %s: %s' % (url, resp), file = stderr)
+    exit(10)
+  event = json.loads(content.decode('utf-8'))
+  if 'incrementalSynchronisationAvailable' in event and event['incrementalSynchronisationAvailable'] and 'newEventToken' in event:
+    return event['newEventToken']
+  else:
+    return None
+
+newEventToken = getEventToken()
+
+
 def membersOf(groupName):
   return [user['name'] for user in get(um + '/group/user/nested?groupname=' + quote(groupName))['users']]
 
 print('# Membership from %s' % base)
+
+print('# eventToken: %s' % newEventToken)
 
 # Matches lines of the form:
 # groupName =
