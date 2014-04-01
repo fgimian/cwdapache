@@ -7,5 +7,5 @@ if [ -f "$VF" ]; then
   cat "$VF"
 else
   # Building from Git
-  echo -n "`git describe --dirty`"
+  echo -n "`git describe --dirty | sed -e s/-/./g`"
 fi
