@@ -11,7 +11,7 @@ The following instructions assume your current working directory is the director
 
 ## Building on CentOS 6
 
-(last tested on CentOS 6.5)
+Last tested on CentOS 6.5:
 
     yum install autoconf automake curl-devel httpd-devel libtool libxml2-devel subversion-devel curl httpd-devel libtool libxml2 mod_dav_svn
     libtoolize
@@ -36,7 +36,7 @@ If you'd like to build an RPM for later installation:
 
 ## Building on CentOS 5
 
-(last tested on CentOS 5.10)
+Last tested on CentOS 5.10.
 
 Follow the instructions for CentOS 6, but:
 
