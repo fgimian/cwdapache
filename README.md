@@ -40,7 +40,7 @@ Last tested on CentOS 5.10.
 
 Follow the instructions for CentOS 6, but:
 
-    - you must use a more recent version of [libtool](http://www.gnu.org/software/libtool/libtool.html). [libtool 2.2.6b](http://mirror.aarnet.edu.au/pub/gnu/libtool/libtool-2.2.6b.tar.gz) is what CentOS 6 ships with at time of writing, and is known to work.
+- you must use a more recent version of [libtool](http://www.gnu.org/software/libtool/libtool.html). [libtool 2.2.6b](http://mirror.aarnet.edu.au/pub/gnu/libtool/libtool-2.2.6b.tar.gz) is what CentOS 6 ships with at time of writing, and is known to work.
 
 ## Building on Debian 6 (squeeze):
 
