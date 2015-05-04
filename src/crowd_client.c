@@ -631,9 +631,15 @@ static char *make_app_cache_key(const request_rec *r, const crowd_config *config
 }
 
 static char *make_session_cache_key(const char *token, const char *forwarded_for, const request_rec *r, const crowd_config *config) {
+#if AP_MODULE_MAGIC_AT_LEAST(20080403,1)
+    return log_ralloc(r, apr_psprintf(r->pool, "%s\037%s\037%s\037%s\037%s", token,
+        forwarded_for == NULL ? "" : forwarded_for, r->connection->client_ip, config->crowd_app_name,
+        config->crowd_url));
+#else
     return log_ralloc(r, apr_psprintf(r->pool, "%s\037%s\037%s\037%s\037%s", token,
         forwarded_for == NULL ? "" : forwarded_for, r->connection->remote_ip, config->crowd_app_name,
         config->crowd_url));
+#endif
 }
 
 /*==========================
@@ -764,9 +770,15 @@ static bool handle_crowd_create_session_session_element(write_data_t *write_data
 }
 
 static const char *get_validation_factors(const request_rec *r, const char *forwarded_for) {
+#if AP_MODULE_MAGIC_AT_LEAST(20080403,1)
+    const char *payload_beginning = log_ralloc(r, apr_pstrcat(r->pool,
+        "<validation-factors><validation-factor><name>remote_address</name><value>", r->connection->client_ip,
+        "</value></validation-factor>", NULL));
+#else
     const char *payload_beginning = log_ralloc(r, apr_pstrcat(r->pool,
         "<validation-factors><validation-factor><name>remote_address</name><value>", r->connection->remote_ip,
         "</value></validation-factor>", NULL));
+#endif
     if (payload_beginning == NULL) {
         return NULL;
     }
@@ -863,7 +875,7 @@ static const char *make_validate_session_url(const request_rec *r, const crowd_c
 
     char *url = log_ralloc(r, apr_pstrcat(r->pool, urlWithoutToken, escapedToken, NULL));
 
-    curl_free(escapedToken);
+    curl_free((void *)escapedToken);
 
     return url;
 }

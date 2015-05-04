@@ -1,5 +1,5 @@
 AC_INIT([mod_authnz_crowd], m4_esyscmd([./version-gen]), [support@atlassian.com])
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+AM_INIT_AUTOMAKE([-Wall foreign])
 AC_PROG_CC
 AC_PROG_LIBTOOL
 AC_CONFIG_HEADERS([config.h])
@@ -25,7 +25,7 @@ AC_CHECK_FILE([/usr/local/apache2/include/httpd.h], [APACHE_INCLUDE_DIR="/usr/lo
 ])
 AC_SUBST([APACHE_INCLUDE_DIR])
 
-AC_PATH_PROG([HTTPD], [httpd], , [/usr/local/apache2/bin:/usr/sbin])
+AC_PATH_PROGS([HTTPD], [httpd apache2], , [/usr/local/apache2/bin:/usr/sbin])
 APACHE_BIN_DIR=`AS_DIRNAME($HTTPD)`
 AC_SUBST([APACHE_BIN_DIR])
 

@@ -53,6 +53,7 @@ Follow the instructions for CentOS 6, but:
 
     aclocal
     libtoolize
+    autoheader
     automake --force-missing --add-missing
     autoreconf
     ./configure
@@ -63,6 +64,31 @@ Follow the instructions for CentOS 6, but:
     make install
 
 # After installing
+
+Apache config example
+
+    <Directory /var/www/htdocs/>
+        Options -Indexes +FollowSymLinks +MultiViews
+        AllowOverride None
+        Order allow,deny
+        allow from all
+
+        AuthName "__AUTHNAME__"
+        AuthType Basic
+        AuthBasicProvider crowd
+
+        CrowdAppName __APPNAME__
+        CrowdAppPassword __APPPWD__
+        CrowdURL https://__CROWDSERVER__/crowd/
+        CrowdCertPath __CERTPATH__
+
+        CrowdAcceptSSO On
+        CrowdCreateSSO On
+
+        Require valid-user
+        #configure groups in apache 2.4 as follows:
+        #Require crowd-group __GROUP__
+    </Directory>
 
 Modify apache config, do NOT USE .htaccess!
 
