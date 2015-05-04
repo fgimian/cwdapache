@@ -13,6 +13,9 @@ compile
 config.*
 configure
 configure-stamp
+debian/cwdapache.*
+debian/cwdapache/
+debian/files
 depcomp
 install-sh
 libtool

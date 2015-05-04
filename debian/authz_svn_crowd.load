@@ -1,0 +1,2 @@
+# Depends: authz_svn
+LoadModule authz_svn_crowd_module /usr/lib/apache2/modules/mod_authz_svn_crowd.so

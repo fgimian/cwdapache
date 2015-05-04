@@ -1,0 +1,80 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+# export DH_VERBOSE=1
+
+configure: configure-stamp
+configure-stamp:
+	dh_testdir
+	aclocal
+	libtoolize
+	autoheader
+	automake --force-missing --add-missing
+	autoreconf
+	./configure
+	touch configure-stamp
+
+build: build-stamp
+
+build-stamp: configure-stamp
+	dh_testdir
+	$(MAKE)
+	touch $@
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp configure-stamp
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_prep
+	dh_installdirs
+
+	mkdir -p $(CURDIR)/debian/cwdapache/usr/lib/apache2/modules
+	/usr/share/apache2/build/instdso.sh SH_LIBTOOL='/usr/share/apr-1.0/build/libtool' src/mod_authnz_crowd.la $(CURDIR)/debian/cwdapache/usr/lib/apache2/modules
+	/usr/share/apache2/build/instdso.sh SH_LIBTOOL='/usr/share/apr-1.0/build/libtool' src/svn/mod_authz_svn_crowd.la $(CURDIR)/debian/cwdapache/usr/lib/apache2/modules
+	mv $(CURDIR)/debian/cwdapache/usr/lib/apache2/modules/mod_authnz_crowd.so.0.0.0 $(CURDIR)/debian/cwdapache/usr/lib/apache2/modules/mod_authnz_crowd.so
+	mv $(CURDIR)/debian/cwdapache/usr/lib/apache2/modules/mod_authz_svn_crowd.so.0.0.0 $(CURDIR)/debian/cwdapache/usr/lib/apache2/modules/mod_authz_svn_crowd.so
+
+# Build architecture-independent files here.
+binary-indep: install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs
+	dh_installdocs
+	dh_installexamples
+	dh_install
+	dh_apache2
+#	dh_installmenu
+#	dh_installdebconf
+#	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installpam
+#	dh_installmime
+#	dh_python
+#	dh_installinit
+#	dh_installcron
+#	dh_installinfo
+	dh_installman
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+#	dh_perl
+#	dh_makeshlibs
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure

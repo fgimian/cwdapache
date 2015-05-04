@@ -1,0 +1,16 @@
+Source: cwdapache
+Section: universe/web
+Priority: extra
+Maintainer: Atlassian <support@atlassian.com>
+Build-Depends: debhelper (>= 8.0.0), autoconf, automake, libcurl4-gnutls-dev, apache2, apache2-dev, libtool, libxml2-dev, libsvn-dev, git
+Standards-Version: 3.9.4
+Homepage: https://confluence.atlassian.com/display/CROWD/Integrating+Crowd+with+Apache
+Vcs-Git: git@bitbucket.org:atlassian/cwdapache.git
+Vcs-Browser: https://bitbucket.org/atlassian/cwdapache
+
+Package: cwdapache
+Architecture: any
+Depends:
+Description: Apache httpd module for Atlassian Crowd
+ Modules for Apache httpd that allow Atlassian Crowd to be used for the
+ authentication and authorisation of HTTP and Subversion requests
