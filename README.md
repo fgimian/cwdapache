@@ -49,7 +49,7 @@ Follow the instructions for CentOS 6, but:
 
 - you must use a more recent version of [libtool](http://www.gnu.org/software/libtool/libtool.html). [libtool 2.2.6b](http://mirror.aarnet.edu.au/pub/gnu/libtool/libtool-2.2.6b.tar.gz) is what CentOS 6 ships with at time of writing, and is known to work.
 
-## Building on Debian 6 (squeeze):
+## Building on Ubuntu 14.04 (trusty) or Debian 6 (squeeze):
 
     aclocal
     libtoolize
@@ -58,6 +58,15 @@ Follow the instructions for CentOS 6, but:
     autoreconf
     ./configure
     make
+
+### Optional: How to Build a Debian package for Ubuntu 14.04 (trusty)
+
+If you'd like to build a Debian for later installation:
+
+    sudo apt-get install devscripts equivs
+    sudo mk-build-deps -i -r
+    dpkg-buildpackage -us -us
+    echo "Your Debian package should be in..." && ls ../libapache2-mod-auth-crowd_*.deb
 
 # Installing
 
