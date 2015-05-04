@@ -1,4 +1,4 @@
-cwdapache (2.3) trusty; urgency=low
+libapache2-mod-auth-crowd (2.3) trusty; urgency=low
 
   * Initial packaged release
 

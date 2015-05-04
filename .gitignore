@@ -13,8 +13,8 @@ compile
 config.*
 configure
 configure-stamp
-debian/cwdapache.*
-debian/cwdapache/
+debian/libapache2-mod-auth-crowd.*
+debian/libapache2-mod-auth-crowd/
 debian/files
 depcomp
 install-sh
