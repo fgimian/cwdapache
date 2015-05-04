@@ -10,7 +10,7 @@ Vcs-Browser: https://bitbucket.org/atlassian/cwdapache
 
 Package: cwdapache
 Architecture: any
-Depends:
+Depends: libc6 (>= 2.14), libapache2-mod-svn, libcurl3, libxml2, apache2-api-20120211
 Description: Apache httpd module for Atlassian Crowd
  Modules for Apache httpd that allow Atlassian Crowd to be used for the
  authentication and authorisation of HTTP and Subversion requests
