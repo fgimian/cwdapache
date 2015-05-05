@@ -2,18 +2,22 @@
 
 See [Integrating Crowd with Apache](https://confluence.atlassian.com/x/rgGY) for background information and usage instructions.
 
+# About
+
+This project is a fork of [Atlassian's Apache Connector for Crowd](https://bitbucket.org/atlassian/cwdapache) with the following changes:
+
+* [Mathias Burger's Apache 2.4 compatibility patch](https://bitbucket.org/atlassian/cwdapache/pull-request/18/added-apache-24-compatibility-and-fixed/diff) has been applied.
+* I have written the necessary files to allow for packaging of this for Debian-based distributions. This has currently only been successfully tested against Ubuntu 14.04 (trusty) but more distributions will be officially supported soon.
+
 # Issues
 
-We use JIRA rather than Bitbucket's issue tracking:
-
-* For questions or support requests, please [contact our friendly suppport team](https://support.atlassian.com).
-* You can report bugs at [https://ecosystem.atlassian.net/browse/CWDAPACHE/](https://ecosystem.atlassian.net/browse/CWDAPACHE/).
+Sadly, [Atlassian have dropped support](https://confluence.atlassian.com/display/CROWD/Integrating+Crowd+with+Subversion) for this module.  I'm not an experienced C coder myself, but I'd be happy to accept pull requests which are approved by various parties and integrate them into future verisons.
 
 # Building
 
 The following instructions assume your current working directory is the directory where cwdapache is checked out, and that [Git](http://git-scm.com/) is available on the build machine (it's used during the build):
 
-     git clone https://bitbucket.org/atlassian/cwdapache.git 
+     git clone https://github.com/fgimian/cwdapache.git
      cd cwdapache
 
 ## Building on CentOS 6
