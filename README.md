@@ -2,6 +2,13 @@
 
 See [Integrating Crowd with Apache](https://confluence.atlassian.com/x/rgGY) for background information and usage instructions.
 
+# About
+
+This project is a fork of [Atlassian's Apache Connector for Crowd](https://bitbucket.org/atlassian/cwdapache) with the following changes:
+
+* [Mathias Burger's Apache 2.4 compatibility patch](https://bitbucket.org/atlassian/cwdapache/pull-request/18/added-apache-24-compatibility-and-fixed/diff) has been applied.
+* I have written the necessary files to allow for packaging of this for Debian-based distributions. This has currently only been successfully tested against Ubuntu 14.04 (trusty) but more distributions will be officially supported soon.
+
 # Issues
 
 We use JIRA rather than Bitbucket's issue tracking:
