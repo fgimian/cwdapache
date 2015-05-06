@@ -10,7 +10,7 @@ Vcs-Browser: https://github.com/fgimian/cwdapache
 
 Package: libapache2-mod-auth-crowd
 Architecture: any
-Depends: libc6 (>= 2.14), libapache2-mod-svn, libcurl3, libxml2, apache2-api-20120211
+Depends: libc6 (>= 2.14), libapache2-mod-svn, libcurl3-gnutls, libxml2, apache2-api-20120211
 Description: Apache httpd module for Atlassian Crowd
  Modules for Apache httpd that allow Atlassian Crowd to be used for the
  authentication and authorisation of HTTP and Subversion requests
