@@ -1,4 +1,4 @@
 mod src/.libs/mod_authnz_crowd.so
-mod src/svn/.libs/mod_authz_svn_crowd.so
 mod debian/authnz_crowd.load
+mod src/svn/.libs/mod_authz_svn_crowd.so
 mod debian/z_authz_svn_crowd.load
