@@ -1,5 +1,5 @@
 Name:           mod_authnz_crowd
-Version:        2.1
+Version:        2.2.2
 Release:        1%{?dist}
 Summary:        Modules for integrating Apache httpd and Subversion with Atlassian Crowd
 
@@ -43,7 +43,12 @@ rm -rf $RPM_BUILD_ROOT
 %doc LICENSE
 
 %post
-/usr/sbin/apxs -e -a -n authnz_crowd mod_authnz_crowd.so
+%if 0%{?rhel} >= 7
+APXS=/usr/bin/apxs
+%else
+APXS=/usr/sbin/apxs
+%endif
+$APXS -e -a -n authnz_crowd mod_authnz_crowd.so
 cat << END > /tmp/httpd.conf.sed
 /^[ \t]*[Ll][Oo][Aa][Dd][Mm][Oo][Dd][Uu][Ll][Ee][ \t]\+authz_svn_module[ \t]/ {
     s/^/# /

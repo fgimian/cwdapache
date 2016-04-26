@@ -610,7 +610,7 @@ apr_array_header_t *authnz_crowd_user_groups(const char *username, request_rec *
  * @param r the current request
  * @return OK, DECLINED, or HTTP_...
  */
-#if AP_MODULE_MAGIC_AT_LEAST(20080403,1)
+#if AP_MODULE_MAGIC_AT_LEAST(20080403,1) || AP_MODULE_MAGIC_AT_LEAST(20120211,24)
 static authz_status auth_group_checker(request_rec *r,
                  const char *require_line,
                  const void *parsed_require_args) {
