@@ -1,5 +1,7 @@
 AC_INIT([mod_authnz_crowd], m4_esyscmd([./version-gen]), [support@atlassian.com])
 AM_INIT_AUTOMAKE([-Wall foreign])
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
+LT_INIT
 AC_PROG_CC
 AC_PROG_LIBTOOL
 AC_CONFIG_HEADERS([config.h])
@@ -64,7 +66,9 @@ AC_CHECK_FILE([/usr/local/apache2/bin/apxs], [APXS="/usr/local/apache2/bin/apxs"
     AC_CHECK_FILE([/usr/sbin/apxs], [APXS="/usr/sbin/apxs"], [
         AC_CHECK_FILE([/usr/bin/apxs2], [APXS="/usr/bin/apxs2"], [
             AC_CHECK_FILE([/usr/sbin/apxs2], [APXS="/usr/sbin/apxs2"], [
-                AC_MSG_ERROR([Could not locate Apache apxs binary])
+                AC_CHECK_FILE([/usr/bin/apxs], [APXS="/usr/bin/apxs"], [
+                    AC_MSG_ERROR([Could not locate Apache apxs binary])
+                ])
             ])
         ])
     ])
