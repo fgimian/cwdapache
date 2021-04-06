@@ -43,7 +43,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc LICENSE
 
 %post
-/usr/sbin/apxs -e -a -n authnz_crowd mod_authnz_crowd.so
+/usr/bin/apxs -e -a -n authnz_crowd mod_authnz_crowd.so
 cat << END > /tmp/httpd.conf.sed
 /^[ \t]*[Ll][Oo][Aa][Dd][Mm][Oo][Dd][Uu][Ll][Ee][ \t]\+authz_svn_module[ \t]/ {
     s/^/# /
@@ -56,7 +56,7 @@ sed -i.bak -f /tmp/httpd.conf.sed /etc/httpd/conf/httpd.conf /etc/httpd/conf.d/*
 /usr/sbin/apachectl graceful || true
 
 %preun
-/usr/sbin/apxs -e -A -n authnz_crowd mod_authnz_crowd.so
+/usr/bin/apxs -e -A -n authnz_crowd mod_authnz_crowd.so
 cat << END > /tmp/httpd.conf.sed
 /^[ \t]*[Ll][Oo][Aa][Dd][Mm][Oo][Dd][Uu][Ll][Ee][ \t]\+authz_svn_crowd_module[ \t]/ {
     s/^/# /
