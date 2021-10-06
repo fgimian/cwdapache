@@ -529,6 +529,7 @@ static int crowd_request(const request_rec *r, const crowd_config *config, bool 
             || curl_easy_setopt(curl_easy, CURLOPT_WRITEFUNCTION, write_response)
             || curl_easy_setopt(curl_easy, CURLOPT_WRITEDATA, &write_data)
             || curl_easy_setopt(curl_easy, CURLOPT_URL, url)
+            || curl_easy_setopt(curl_easy, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1)
 #ifdef CURLOPT_USERNAME
             || curl_easy_setopt(curl_easy, CURLOPT_USERNAME, config->crowd_app_name)
             || curl_easy_setopt(curl_easy, CURLOPT_PASSWORD, config->crowd_app_password)
