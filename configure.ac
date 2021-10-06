@@ -61,12 +61,10 @@ AC_CHECK_FILE([/usr/local/apache2/conf/httpd.conf], [HTTPD_CONF="/usr/local/apac
 AC_SUBST([HTTPD_CONF])
 
 AC_CHECK_FILE([/usr/local/apache2/bin/apxs], [APXS="/usr/local/apache2/bin/apxs"], [
-    AC_CHECK_FILE([/usr/bin/apxs], [APXS="/usr/bin/apxs"], [
-        AC_CHECK_FILE([/usr/sbin/apxs], [APXS="/usr/sbin/apxs"], [
-            AC_CHECK_FILE([/usr/bin/apxs2], [APXS="/usr/bin/apxs2"], [
-                AC_CHECK_FILE([/usr/sbin/apxs2], [APXS="/usr/sbin/apxs2"], [
-                    AC_MSG_ERROR([Could not locate Apache apxs binary])
-                ])
+    AC_CHECK_FILE([/usr/sbin/apxs], [APXS="/usr/sbin/apxs"], [
+        AC_CHECK_FILE([/usr/bin/apxs2], [APXS="/usr/bin/apxs2"], [
+            AC_CHECK_FILE([/usr/sbin/apxs2], [APXS="/usr/sbin/apxs2"], [
+                AC_MSG_ERROR([Could not locate Apache apxs binary])
             ])
         ])
     ])
