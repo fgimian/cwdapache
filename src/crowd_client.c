@@ -529,6 +529,7 @@ static int crowd_request(const request_rec *r, const crowd_config *config, bool 
             || curl_easy_setopt(curl_easy, CURLOPT_WRITEFUNCTION, write_response)
             || curl_easy_setopt(curl_easy, CURLOPT_WRITEDATA, &write_data)
             || curl_easy_setopt(curl_easy, CURLOPT_URL, url)
+            || curl_easy_setopt(curl_easy, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1)
 #ifdef CURLOPT_USERNAME
             || curl_easy_setopt(curl_easy, CURLOPT_USERNAME, config->crowd_app_name)
             || curl_easy_setopt(curl_easy, CURLOPT_PASSWORD, config->crowd_app_password)
@@ -544,8 +545,7 @@ static int crowd_request(const request_rec *r, const crowd_config *config, bool 
             || (post && (curl_easy_setopt(curl_easy, CURLOPT_POST, 1)
             || curl_easy_setopt(curl_easy, CURLOPT_READFUNCTION, read_crowd_authentication_request)
             || curl_easy_setopt(curl_easy, CURLOPT_READDATA, &read_data)
-            || curl_easy_setopt(curl_easy, CURLOPT_POSTFIELDSIZE, read_data.remaining)
-            || curl_easy_setopt(curl_easy, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1)))) {
+            || curl_easy_setopt(curl_easy, CURLOPT_POSTFIELDSIZE, read_data.remaining)))) {
             ap_log_rerror(APLOG_MARK, APLOG_CRIT, 0, r, "Failed to set curl options.");
             success = false;
         }
